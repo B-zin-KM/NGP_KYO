@@ -1,0 +1,15 @@
+﻿  main.cpp
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(16,12): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(41,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(230,122): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(231,122): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(313,123): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(314,123): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(398,123): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(399,123): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(428,38): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(429,38): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(430,21): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(434,51): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\김범진\source\repos\INVERSUS_NGP\main.cpp(435,51): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  INVERSUS_NGP.vcxproj -> C:\Users\김범진\source\repos\INVERSUS_NGP\x64\Debug\INVERSUS_NGP.exe
