@@ -1,9 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\\uAE40\uBC94\uC9C4\\source\\repos\\INVERSUS_NGP\\",
+  "WorkspaceRootPath": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|C:\\Users\\\uAE40\uBC94\uC9C4\\source\\repos\\INVERSUS_NGP\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|solutionrelative:game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|solutionrelative:game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FF6E3C73-B285-4371-8A6A-9EFA435D119B}|INVERSUS_NGP.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -14,17 +22,47 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "game.cpp",
+              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.cpp",
+              "RelativeDocumentMoniker": "game.cpp",
+              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.cpp",
+              "RelativeToolTip": "game.cpp",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAAAPQAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-11-11T17:26:48.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "game.h",
+              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.h",
+              "RelativeDocumentMoniker": "game.h",
+              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\game.h",
+              "RelativeToolTip": "game.h",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAAAEYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-11T17:19:41.39Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "main.cpp",
-              "DocumentMoniker": "C:\\Users\\\uAE40\uBC94\uC9C4\\source\\repos\\INVERSUS_NGP\\main.cpp",
+              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
-              "ToolTip": "C:\\Users\\\uAE40\uBC94\uC9C4\\source\\repos\\INVERSUS_NGP\\main.cpp",
+              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAAADAAAAAAAAAAAqwCEDAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAAkAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-11-09T20:08:21.073Z",
               "EditorCaption": ""
