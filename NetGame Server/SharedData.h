@@ -1,0 +1,27 @@
+#pragma once
+#include "Common.h"
+
+#define PORT 9000
+#define MAX_PLAYERS_PER_ROOM 3
+#define MATCHING_TIMEOUT_SEC 30 // 우리가 하기로한 매칭 타임아웃 규칙 선언
+
+typedef struct {
+    SOCKET socket;
+    int id;
+    // 플레이어 구조체
+    // float x, y; 같은거
+} Player;
+
+typedef struct {
+    Player players[MAX_PLAYERS_PER_ROOM];
+    int connectedPlayers;
+    
+    CRITICAL_SECTION lock;
+    
+    // 게임 공용데이터 구조체 부분
+    // 적같은거 넣으면 될거같음
+    
+
+} GameRoom;
+
+extern GameRoom g_GameRoom;
