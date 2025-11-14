@@ -1,5 +1,6 @@
 #include "game.h"
 
+
 bool bulletVSboard(int x, int y, int x2, int y2) {					//가로총알 vs 보드 충돌체크
 	if ((x + bulletlen >= x2 && y + bulletthick >= y2) && (x <= x2 + boardsize && y <= y2 + boardsize)) {
 		return TRUE;
@@ -66,6 +67,12 @@ bool playerVSenemy(int x, int y, int x2, int y2) {					//주인공 vs 적 충돌체크
 
 void Game_Init(HWND hWnd, GameState* pGame)
 {
+
+	// --- 네트워크 초기화 ---
+	if (pGame->networkManager.Init(hWnd) == false) {
+		printf("서버 연결 실패.\n");
+	}
+
 	// 기존 WM_CREATE 로직
 	pGame->boardnum = 0;
 	//보드 생성
@@ -131,18 +138,30 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	// 이동 키 (상태 저장)
 	switch (wParam) {
 	case 'd': case 'D':
+		if (pGame->keys['D'] == false) {
+			pGame->networkManager.SendMovePacket(1);
+		}
 		pGame->keys['D'] = true;
-		pGame->player.direct = 1; // 방향은 즉시 설정
+		pGame->player.direct = 1;
 		break;
 	case 'a': case 'A':
+		if (pGame->keys['A'] == false) {
+			pGame->networkManager.SendMovePacket(2);
+		}
 		pGame->keys['A'] = true;
 		pGame->player.direct = 2;
 		break;
 	case 's': case 'S':
+		if (pGame->keys['S'] == false) {
+			pGame->networkManager.SendMovePacket(3);
+		}
 		pGame->keys['S'] = true;
 		pGame->player.direct = 3;
 		break;
 	case 'w': case 'W':
+		if (pGame->keys['W'] == false) {
+			pGame->networkManager.SendMovePacket(4);
+		}
 		pGame->keys['W'] = true;
 		pGame->player.direct = 4;
 		break;
@@ -151,6 +170,8 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	// 발사 키 (즉시 실행)
 	switch (wParam) {
 	case VK_RIGHT:
+		pGame->networkManager.SendAttackPacket(1); // 1:Right
+
 		if (pGame->bulletcount < 6) {
 			pGame->bulletcount++;
 			for (int i = 0; i < pGame->bulletcount; i++) {
@@ -158,12 +179,14 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 					pGame->bullet[i].direct = 1;
 					pGame->bullet[i].x = pGame->player.x + 6; pGame->bullet[i].y = pGame->player.y + 11;
 					pGame->bullet[i].shot = TRUE;
-					break; // 한 발만 발사
+					break; 
 				}
 			}
 		}
 		break;
 	case VK_LEFT:
+		pGame->networkManager.SendAttackPacket(2); // 2:Left
+
 		if (pGame->bulletcount < 6) {
 			pGame->bulletcount++;
 			for (int i = 0; i < pGame->bulletcount; i++) {
@@ -171,12 +194,14 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 					pGame->bullet[i].direct = 2;
 					pGame->bullet[i].x = pGame->player.x + 6; pGame->bullet[i].y = pGame->player.y + 11;
 					pGame->bullet[i].shot = TRUE;
-					break; // 한 발만 발사
+					break; 
 				}
 			}
 		}
 		break;
 	case VK_DOWN:
+		pGame->networkManager.SendAttackPacket(3); // 3:Down
+
 		if (pGame->bulletcount < 6) {
 			pGame->bulletcount++;
 			for (int i = 0; i < pGame->bulletcount; i++) {
@@ -184,12 +209,14 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 					pGame->bullet[i].direct = 3;
 					pGame->bullet[i].x = pGame->player.x + 11; pGame->bullet[i].y = pGame->player.y + 6;
 					pGame->bullet[i].shot = TRUE;
-					break; // 한 발만 발사
+					break; 
 				}
 			}
 		}
 		break;
 	case VK_UP:
+		pGame->networkManager.SendAttackPacket(4); // 4:Up
+
 		if (pGame->bulletcount < 6) {
 			pGame->bulletcount++;
 			for (int i = 0; i < pGame->bulletcount; i++) {
@@ -197,7 +224,7 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 					pGame->bullet[i].direct = 4;
 					pGame->bullet[i].x = pGame->player.x + 11; pGame->bullet[i].y = pGame->player.y + 6;
 					pGame->bullet[i].shot = TRUE;
-					break; // 한 발만 발사
+					break; 
 				}
 			}
 		}
@@ -532,7 +559,7 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 }
 
 
-// --- [신규] 그리기 전용 함수 ---
+// ---  그리기 전용 함수 ---
 void Game_Render(HDC mDC, GameState* pGame)
 {
 	HBRUSH hBrush, oldBrush;
