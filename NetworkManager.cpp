@@ -1,6 +1,6 @@
 #include "NetworkManager.h"
 #include <stdio.h> 
-
+#include <windows.h>
 
 NetworkManager::NetworkManager()
 {

@@ -1,12 +1,14 @@
 #pragma once
 
+#include "NetworkManager.h"
+
 #include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <time.h>
 #include <math.h>
-#include "NetworkManager.h"
+
 
 #define boardsize 35
 #define playersize 30
