@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include "protocol.h"
 
 bool bulletVSboard(int x, int y, int x2, int y2) {					//가로총알 vs 보드 충돌체크
 	if ((x + bulletlen >= x2 && y + bulletthick >= y2) && (x <= x2 + boardsize && y <= y2 + boardsize)) {
@@ -642,5 +642,50 @@ void Game_Render(HDC mDC, GameState* pGame)
 	if (pGame->time == 120 && pGame->score < 10000) {
 		wsprintf(lpOut, L"패배");
 		TextOut(mDC, 50, 500, lpOut, lstrlen(lpOut));
+	}
+}
+
+void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
+{
+	// 서버로부터 받은 패킷 타입에 따라 분기
+	switch (pHeader->type)
+	{
+		// (1) "매칭 성공" 패킷 처리
+	case S_MATCH_COMPLETE:
+	{
+		S_MatchCompletePacket* pPkt = (S_MatchCompletePacket*)pHeader;
+		pGame->myPlayerID = pPkt->yourPlayerID;
+		printf("[게임 시작] 매칭 성공! 내 플레이어 ID: %d\n", pGame->myPlayerID);
+		break;
+	}
+
+	// (2) "게임 상태" 패킷 처리 (가장 중요)
+	case S_GAME_STATE:
+	{
+		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
+
+		// 서버가 보내준 정보로 클라이언트의 GameState를 강제로 덮음.
+
+		// 1. 모든 플레이어의 위치/생존 정보 갱신
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			pGame->players[i].x = pPkt->players[i].x;
+			pGame->players[i].y = pPkt->players[i].y;
+			pGame->players[i].life = pPkt->players[i].life;
+		}
+
+		// 2. 모든 적의 위치/생존 정보 갱신
+		for (int i = 0; i < MAX_ENEMIES; i++) {
+			pGame->enemies[i].x = pPkt->enemies[i].x;
+			pGame->enemies[i].y = pPkt->enemies[i].y;
+			pGame->enemies[i].life = pPkt->enemies[i].life;
+		}
+		break;
+	}
+
+	// (나중에 S_PLAYER_DIE, S_ATTACK_BROADCAST 등 추가...)
+
+	default:
+		printf("알 수 없는 패킷 타입 수신: %d\n", pHeader->type);
+		break;
 	}
 }

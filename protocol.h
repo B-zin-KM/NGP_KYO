@@ -1,7 +1,7 @@
 #pragma once
 
-// 1바이트 크기로 정렬
-#pragma pack(push, 1) 
+#define MAX_PLAYERS 3
+#define MAX_ENEMIES 10
 
 // --- 공용 헤더 ---
 struct PacketHeader {
@@ -24,7 +24,29 @@ struct C_AttackPacket : public PacketHeader {
 };
 
 // --- 서버 -> 클라이언트 (S_XXXX) ---
-// (나중에 서버가 보낼 패킷도 여기에 추가)
+// (1) 매칭 성공 시, "당신은 0~2번입니다"라고 알려주는 패킷
+#define S_MATCH_COMPLETE 101
+struct S_MatchCompletePacket : public PacketHeader {
+    int yourPlayerID; // 0, 1, 2 중 하나
+};
 
+// (2) 게임의 핵심 상태를 16ms마다 통째로 보내는 패킷
+struct PlayerState {
+    bool life;
+    int x, y;
+};
+struct EnemyState {
+    bool life;
+    int x, y;
+};
+
+#define S_GAME_STATE 102
+struct S_GameStatePacket : public PacketHeader {
+    // 모든 플레이어의 상태
+    PlayerState players[MAX_PLAYERS];
+    // 모든 적의 상태
+    EnemyState enemies[MAX_ENEMIES];
+    // ( 총알, 보드, 점수 등 추가)
+};
 
 #pragma pack(pop)
