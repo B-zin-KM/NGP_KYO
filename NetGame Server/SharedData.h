@@ -10,6 +10,7 @@ typedef struct {
     int id;
     // 플레이어 구조체
     // float x, y; 같은거
+    bool isConnected;
 } Player;
 
 typedef struct {

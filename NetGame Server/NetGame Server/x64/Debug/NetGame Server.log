@@ -1,0 +1,7 @@
+﻿  Common.c
+  GameLogic.c
+  main.c
+  ServerFramework.c
+  코드를 생성하고 있습니다...
+C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\ServerFramework.c(30,56): warning C4244: '=': 'time_t'에서 'long'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  NetGame Server.vcxproj -> C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe
