@@ -1,4 +1,4 @@
-#include "Common.h" // 자신과 짝이 되는 헤더를 가장 먼저 포함
+#include "Common.h"
 
 void err_quit(const char* msg) {
 	LPVOID lpMsgBuf;
