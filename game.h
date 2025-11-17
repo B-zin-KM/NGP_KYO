@@ -1,11 +1,14 @@
 #pragma once
 
+#include "NetworkManager.h"
+
 #include <windows.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <tchar.h>
 #include <time.h>
 #include <math.h>
+
 
 #define boardsize 35
 #define playersize 30
@@ -97,6 +100,9 @@ struct GameState {
 	HBRUSH hBrushGray;
 	HBRUSH hBrushRed;
 	HBRUSH hBrushYellow;
+
+	// 네트워크 매니저
+	NetworkManager networkManager;
 };
 
 

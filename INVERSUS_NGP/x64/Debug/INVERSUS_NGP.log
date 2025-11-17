@@ -1,14 +1,24 @@
-﻿  game.cpp
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(94,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(95,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(292,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(293,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(413,51): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(414,51): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(415,20): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(419,64): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(420,64): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  NetworkManager.cpp
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\protocol.h(52,9): warning C4161: #pragma pack(pop...): 푸시 횟수보다 팝 횟수가 많습니다.
+  (소스 파일 'NetworkManager.cpp'을(를) 컴파일하는 중)
+  
+  game.cpp
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\protocol.h(52,9): warning C4161: #pragma pack(pop...): 푸시 횟수보다 팝 횟수가 많습니다.
+  (소스 파일 'game.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(101,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(102,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(319,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(320,135): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(440,51): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(441,51): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(442,20): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(446,64): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\game.cpp(447,64): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   main.cpp
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\protocol.h(52,9): warning C4161: #pragma pack(pop...): 푸시 횟수보다 팝 횟수가 많습니다.
+  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
+  
 C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\main.cpp(12,12): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\main.cpp(37,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다...
