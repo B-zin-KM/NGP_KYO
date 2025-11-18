@@ -1,33 +1,33 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\",
+  "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:ServerFramework.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:ServerFramework.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:ServerFramework.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:GameLogic.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:SharedData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:Common.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{42450D6F-D8D8-4404-A870-4E243346F179}|NetGame Server.vcxproj|solutionrelative:Common.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -38,47 +38,42 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "GameLogic.c",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c",
               "RelativeDocumentMoniker": "GameLogic.c",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\GameLogic.c",
               "RelativeToolTip": "GameLogic.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-11-14T15:20:52.669Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T15:20:52.669Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "ServerFramework.c",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c",
               "RelativeDocumentMoniker": "ServerFramework.c",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.c",
               "RelativeToolTip": "ServerFramework.c",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAALAAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAcwJ0AAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-11-12T05:22:19.314Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ServerFramework.h",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h",
               "RelativeDocumentMoniker": "ServerFramework.h",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\ServerFramework.h",
               "RelativeToolTip": "ServerFramework.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-11-12T05:15:18.507Z",
               "EditorCaption": ""
@@ -87,9 +82,9 @@
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "SharedData.h",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h",
               "RelativeDocumentMoniker": "SharedData.h",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\SharedData.h",
               "RelativeToolTip": "SharedData.h",
               "ViewState": "AQIAAAAAAAAAAAAAAADwvwwAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -99,9 +94,9 @@
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "Common.c",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.c",
               "RelativeDocumentMoniker": "Common.c",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.c",
               "RelativeToolTip": "Common.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
@@ -111,9 +106,9 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "Common.h",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.h",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.h",
               "RelativeDocumentMoniker": "Common.h",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\Common.h",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\Common.h",
               "RelativeToolTip": "Common.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -123,9 +118,9 @@
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "main.c",
-              "DocumentMoniker": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\main.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\main.c",
               "RelativeDocumentMoniker": "main.c",
-              "ToolTip": "C:\\Users\\82109\\OneDrive\\\uBB38\uC11C\\GitHub\\NGP_KYO\\NetGame Server\\main.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\GitHub\\NGP_KYO\\NetGame Server\\main.c",
               "RelativeToolTip": "main.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
