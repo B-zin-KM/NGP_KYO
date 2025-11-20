@@ -36,7 +36,7 @@ bool NetworkManager::Init(HWND hWnd)
     SOCKADDR_IN serverAddr;
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(7777); // 서버 포트
+    serverAddr.sin_port = htons(9000); // 서버 포트
     inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr); // 서버 IP
 
     if (connect(serverSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
