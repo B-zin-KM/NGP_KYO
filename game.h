@@ -68,18 +68,19 @@ struct ENEMY {
 };
 
 struct GameState {
-	
-	PLAYER player;
-	BOARD board_easy[150];
-	ENEMY enemy_easy[10];
-	BULLET bullet[6];
+
+	int myPlayerID = -1; // 서버가 알려줄 내 ID (0, 1, 2)
+	PLAYER players[MAX_PLAYERS]; // 나를 포함한 모든 플레이어
+	ENEMY enemies[MAX_ENEMIES];   
+
+	BOARD board_easy[150]; // (보드도 나중에 동기화 필요)
+	BULLET bullet[6];       // (총알도 나중에 동기화 필요)
 	READYBULLET readybullet[6];
 
-	// 기존 WndProc의 static 변수
 	int boardnum = 0;
 	int bulletcount = 0;
 	int angles[6];
-	int enemyloc[10];
+	int enemyloc[10]; 
 	int time = 0;
 	int enemycnt = 0;
 	int enemyspawn = 0;
@@ -87,21 +88,17 @@ struct GameState {
 	int combo = 0;
 	bool stop = FALSE;
 
-	// 입력 처리용 (WASD)
 	bool keys[256] = { false };
-
-	// 시간 관리용 (기존 타이머 4, 5, 6을 대체)
 	float scoreTimer = 0.0f;
 	float enemyMoveTimer = 0.0f;
 
-	// GDI 리소스 (WM_PAINT 최적화)
+	// (GDI 리소스)
 	HBRUSH hBrushBlack;
 	HBRUSH hBrushWhite;
 	HBRUSH hBrushGray;
 	HBRUSH hBrushRed;
 	HBRUSH hBrushYellow;
 
-	// 네트워크 매니저
 	NetworkManager networkManager;
 };
 
