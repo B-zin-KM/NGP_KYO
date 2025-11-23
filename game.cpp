@@ -217,8 +217,9 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 		pGame->networkManager.SendAttackPacket(4);
 		break;
 
+	// 재장전 로직
 	case 'r': case 'R':
-		pGame->bulletcount = 0; // (이것도 서버가 처리해야 함)
+		pGame->bulletcount = 0; 
 		break;
 	case '1':
 		pGame->players[id].moojuk = !pGame->players[id].moojuk;
