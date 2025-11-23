@@ -34,6 +34,7 @@ struct S_MatchCompletePacket : public PacketHeader {
 struct PlayerState {
     bool life;
     int x, y;
+    int ammo;
 };
 struct EnemyState {
     bool life;

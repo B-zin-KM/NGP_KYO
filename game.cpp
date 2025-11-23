@@ -90,6 +90,8 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			pGame->players[i].x = pPkt->players[i].x;
 			pGame->players[i].y = pPkt->players[i].y;
 			pGame->players[i].life = pPkt->players[i].life;
+
+			pGame->players[i].ammo = pPkt->players[i].ammo;
 		}
 
 		// 2. 모든 적의 위치/생존 정보 갱신
@@ -307,13 +309,13 @@ void Game_Render(HDC mDC, GameState* pGame)
 	oldBrush = (HBRUSH)SelectObject(mDC, pGame->hBrushBlack);
 	for (int i = 0; i < pGame->bulletcount; i++) {
 		if (pGame->bullet[i].shot) {
-			// (그리기 로직 동일)
 			if (pGame->bullet[i].direct == 1 || pGame->bullet[i].direct == 2)
 				Rectangle(mDC, pGame->bullet[i].x, pGame->bullet[i].y, pGame->bullet[i].x + bulletlen, pGame->bullet[i].y + bulletthick);
 			else
 				Rectangle(mDC, pGame->bullet[i].x, pGame->bullet[i].y, pGame->bullet[i].x + bulletthick, pGame->bullet[i].y + bulletlen);
 		}
 	}
+
 	SelectObject(mDC, oldBrush);
 
 	// 3. 플레이어 그리기 (3명 모두)
@@ -351,4 +353,9 @@ void Game_Render(HDC mDC, GameState* pGame)
 	SelectObject(mDC, oldBrush);
 }
 
-
+// --- 탄환 개수 반환 함수 ---
+int GetAmmoCount(GameState* pGame, int playerID)
+{
+	if (playerID < 0 || playerID >= MAX_PLAYERS) return 0;
+	return pGame->players[playerID].ammo;
+}

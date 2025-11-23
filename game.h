@@ -37,6 +37,7 @@ struct PLAYER {
 	int diesize = 15;
 	bool life = TRUE;
 	bool moojuk = FALSE;
+	int ammo;		// ÃÑ¾Ë
 };
 
 struct BULLET {
@@ -123,3 +124,4 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam);
 void Game_HandleInput_Up(GameState* pGame, WPARAM wParam);
 void Game_Update(HWND hWnd, GameState* pGame, float deltaTime);
 void Game_Render(HDC hdc, GameState* pGame);
+int GetAmmoCount(GameState* pGame, int playerID);
