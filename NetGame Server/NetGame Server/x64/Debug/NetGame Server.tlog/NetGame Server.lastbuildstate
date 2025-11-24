@@ -1,2 +1,7 @@
+<<<<<<< HEAD
+PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.44.35207:TargetPlatformVersion=10.0.26100.0:
+Debug|x64|C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\|
+=======
 PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.43.34808:TargetPlatformVersion=10.0.22621.0:
 Debug|x64|C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\|
+>>>>>>> main
