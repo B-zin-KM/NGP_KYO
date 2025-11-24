@@ -2,7 +2,7 @@
 #include "Common.h"
 
 #define PORT 9000
-#define MAX_PLAYERS_PER_ROOM 3
+#define MAX_PLAYERS_PER_ROOM 1
 #define MATCHING_TIMEOUT_SEC 30 // 우리가 하기로한 매칭 타임아웃 규칙 선언
 
 typedef struct {

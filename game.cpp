@@ -292,7 +292,7 @@ void Game_Render(HDC mDC, GameState* pGame)
 	TCHAR lpOut[100];
 
 	if (pGame->myPlayerID == -1) {
-		wsprintf(lpOut, L"매칭 대기 중... (%d/3)", 0); // (서버가 현재 인원수도 보내주면 좋음)
+		wsprintf(lpOut, L"매칭 대기 중..."); 
 		TextOut(mDC, 500, 400, lpOut, lstrlen(lpOut));
 		return;
 	}
