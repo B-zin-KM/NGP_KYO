@@ -15,6 +15,7 @@ void UpdateEnemyAI() {
 }
 
 void CheckCollisions() {
+
 }
 
 bool CheckGameEndConditions() {

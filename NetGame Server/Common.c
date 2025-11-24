@@ -1,5 +1,5 @@
 #include "Common.h"
-
+// 그냥 오류 확인 함수 모음 
 void err_quit(const char* msg) {
 	LPVOID lpMsgBuf;
 	FormatMessageA(
