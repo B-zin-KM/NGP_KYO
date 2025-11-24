@@ -155,7 +155,9 @@ unsigned __stdcall GameLoopThread(void* arg)
         if (CheckGameEndConditions() == true) {
             break;
         }
-        Sleep(16); // 프레임은 60 정도로 일단 설정함
+        printf("."); // 확인용
+
+        Sleep(1000); // 프레임은 60 정도로 일단 설정함
     }
 
     EnterCriticalSection(&g_GameRoom.lock);
