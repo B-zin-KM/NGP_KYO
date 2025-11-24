@@ -7,6 +7,65 @@ LPCTSTR lpszClass = L"Window Class Name";
 LPCTSTR lpszWindowName = L"Window Programming";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
+void ClientMainLoop(HWND hWnd) {
+	MSG Message = { 0 };
+
+	GameState* pGame = (GameState*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	DWORD prevTime = GetTickCount();
+
+	HDC hDC = GetDC(hWnd);
+
+	while (true) {
+		// 1. 윈도우 메시지 처리 (키 입력, 종료 신호 등)
+		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
+			if (Message.message == WM_QUIT) break;
+			TranslateMessage(&Message);
+			DispatchMessage(&Message);
+		}
+		else {
+			// 2. 게임 로직 실행 (메시지가 없을 때)
+
+			if (!pGame) {
+				pGame = (GameState*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+				continue;
+			}
+			if (pGame->stop) continue;
+
+			// 3. 시간 계산 (Delta Time)
+			DWORD curTime = GetTickCount();
+			DWORD deltaTime = curTime - prevTime;
+
+			// 60프레임(약 16ms) 유지
+			if (deltaTime < 16) {
+				Sleep(1);
+				continue;
+			}
+			prevTime = curTime;
+
+			Game_Update(hWnd, pGame, deltaTime / 1000.0f);
+
+			RECT rt;
+			GetClientRect(hWnd, &rt);
+
+			HDC mDC = CreateCompatibleDC(hDC);
+			HBITMAP hBitmap = CreateCompatibleBitmap(hDC, rt.right, rt.bottom);
+			HBITMAP hOldBitmap = (HBITMAP)SelectObject(mDC, hBitmap);
+
+			PatBlt(mDC, 0, 0, rt.right, rt.bottom, WHITENESS);
+
+			Game_Render(mDC, pGame);
+
+			BitBlt(hDC, 0, 0, rt.right, rt.bottom, mDC, 0, 0, SRCCOPY);
+
+			SelectObject(mDC, hOldBitmap);
+			DeleteObject(hBitmap);
+			DeleteDC(mDC);
+		}
+	}
+
+	ReleaseDC(hWnd, hDC);
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR ipszCmdParam, int nCmdShow)
 {
 	srand(time(NULL));
@@ -30,11 +89,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR ipszCmdPa
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL, 0, 0, 1200, 900, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
-	while (GetMessage(&Message, 0, 0, 0)) {
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
-	}
-	return Message.wParam;
+	//while (GetMessage(&Message, 0, 0, 0)) {
+	//	TranslateMessage(&Message);
+	//	DispatchMessage(&Message);
+	//}
+	ClientMainLoop(hWnd);
+	return 0;
 }
 
 
@@ -59,16 +119,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Game_Init(hWnd, pNewGame); // 분리된 함수 호출
 		break;
 	}
-	case WM_TIMER:
-		if (wParam == ID_GAME_LOOP && pGame && !pGame->stop) {
-			// 1. 게임 로직 업데이트 (16ms마다)
-			Game_Update(hWnd, pGame, GAME_TICK_MS / 1000.0f); // 분리된 함수 호출
-
-			// 2. 화면 갱신 요청
-			InvalidateRect(hWnd, NULL, FALSE);
-		}
-		break;
-
 	case WM_KEYDOWN:
 		if (pGame) {
 			Game_HandleInput_Down(pGame, wParam); // 분리된 함수 호출
@@ -115,8 +165,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
-		// 게임 정리 (메모리 해제 등)
-		KillTimer(hWnd, ID_GAME_LOOP);
 		if (pGame) {
 			Game_Cleanup(pGame); // 분리된 함수 호출
 			delete pGame; // WM_CREATE에서 new 했으므로 delete
