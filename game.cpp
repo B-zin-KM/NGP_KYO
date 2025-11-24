@@ -84,11 +84,20 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 	case S_GAME_STATE:
 	{
 		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
-
+		
+		if (pGame->myPlayerID != -1) {
+			int myid = pGame->myPlayerID;
+			printf("[client] recv state: mypos(%d, %d)\n",
+				   pPkt->players[myid].x, pPkt->players[myid].y);
+		}
+		
 		// 1. 모든 플레이어의 위치/생존 정보 갱신
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			pGame->players[i].x = pPkt->players[i].x;
 			pGame->players[i].y = pPkt->players[i].y;
+
+			pGame->players[i].direct = pPkt->players[i].direct;
+
 			pGame->players[i].life = pPkt->players[i].life;
 
 			pGame->players[i].ammo = pPkt->players[i].ammo;
@@ -173,58 +182,60 @@ void Game_Cleanup(GameState* pGame)
 // --- 키보드 입력 처리 함수 ---
 void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 {
-	if (pGame->myPlayerID == -1) return; // 매칭 전엔 조작 불가
-	int id = pGame->myPlayerID;
+	// 1. 매칭 전에는 조작 불가
+	if (pGame->myPlayerID == -1) return;
 
-	// 이동 키 (WASD) -> 내 캐릭터(id)만 조작
+	// 2. 보낼 패킷 준비
+	C_MovePacket pkt;
+	pkt.size = sizeof(C_MovePacket);
+	pkt.type = C_MOVE; // 10번 
+	pkt.direction = 0;
+
+	// 3. 키 입력에 따라 방향 설정
 	switch (wParam) {
 	case 'd': case 'D':
-		if (pGame->keys['D'] == false) pGame->networkManager.SendMovePacket(1);
-		pGame->keys['D'] = true;
-		pGame->players[id].direct = 1;
+		pkt.direction = 1; // 우
 		break;
 	case 'a': case 'A':
-		if (pGame->keys['A'] == false) pGame->networkManager.SendMovePacket(2);
-		pGame->keys['A'] = true;
-		pGame->players[id].direct = 2;
+		pkt.direction = 2; // 좌
 		break;
 	case 's': case 'S':
-		if (pGame->keys['S'] == false) pGame->networkManager.SendMovePacket(3);
-		pGame->keys['S'] = true;
-		pGame->players[id].direct = 3;
+		pkt.direction = 3; // 하
 		break;
 	case 'w': case 'W':
-		if (pGame->keys['W'] == false) pGame->networkManager.SendMovePacket(4);
-		pGame->keys['W'] = true;
-		pGame->players[id].direct = 4;
+		pkt.direction = 4; // 상
 		break;
 	}
 
-	// 발사 키 (방향키)
+	// 4. 이동 패킷 전송 (방향키 눌렀을 때만)
+	if (pkt.direction != 0) {
+		printf("Send Move Packet: Dir %d\n", pkt.direction); // 디버깅용
+		pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+		return;
+	}
+
+	// 5. 공격 패킷 처리 (방향키)
+	C_AttackPacket atkPkt;
+	atkPkt.size = sizeof(C_AttackPacket);
+	atkPkt.type = C_ATTACK; // 11번
+	atkPkt.direction = 0;
+
 	switch (wParam) {
-	case VK_RIGHT:
-		pGame->networkManager.SendAttackPacket(1);
-		// (클라 예측 총알 발사 로직은 생략하거나 필요시 추가)
-		break;
-	case VK_LEFT:
-		pGame->networkManager.SendAttackPacket(2);
-		break;
-	case VK_DOWN:
-		pGame->networkManager.SendAttackPacket(3);
-		break;
-	case VK_UP:
-		pGame->networkManager.SendAttackPacket(4);
-		break;
-
-	// 재장전 로직
-	case 'r': case 'R':
-		pGame->bulletcount = 0; 
-		break;
-	case '1':
-		pGame->players[id].moojuk = !pGame->players[id].moojuk;
-		break;
+	case VK_RIGHT: atkPkt.direction = 1; break;
+	case VK_LEFT:  atkPkt.direction = 2; break;
+	case VK_DOWN:  atkPkt.direction = 3; break;
+	case VK_UP:    atkPkt.direction = 4; break;
 	}
+
+	if (atkPkt.direction != 0) {
+		pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+	}
+
+	// 기타 키 (R, 1 등) 처리
+	if (wParam == 'r' || wParam == 'R') pGame->bulletcount = 0;
+	if (wParam == '1') pGame->players[pGame->myPlayerID].moojuk = !pGame->players[pGame->myPlayerID].moojuk;
 }
+
 void Game_HandleInput_Up(GameState* pGame, WPARAM wParam)
 {
 	// 이동 키 (상태 해제)
@@ -250,16 +261,15 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 	int id = pGame->myPlayerID;
 
 
-	// 2. 로컬 예측 이동 (내 캐릭터만)
-	// (서버 응답을 기다리면 뚝뚝 끊기므로 미리 움직여 놓음)
-	if (pGame->keys['D']) {
-		pGame->players[id].x += 4;
-		// (벽 충돌 검사는 로컬에서도 해야 함 - playerVSboard 사용)
-	}
+	// 로컬 예측 이동 잠깐 주석으로 함
+	// 서버가 보내주는 좌표로만 움직이는지 확인할라고
+	// 근데 이게 왜 필요한건지 모르겠음 설명좀
+	/*
+	if (pGame->keys['D']) pGame->players[id].x += 4;
 	if (pGame->keys['A']) pGame->players[id].x -= 4;
 	if (pGame->keys['S']) pGame->players[id].y += 4;
 	if (pGame->keys['W']) pGame->players[id].y -= 4;
-
+	*/
 
 	// 3. 시각 효과 (회전 총알)
 	for (int i = 0; i < 6; i++) {
@@ -273,7 +283,7 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 		pGame->readybullet[i].y = pGame->players[id].y + playersize / 2 + static_cast<int>((playersize / 2 - circleRadius - 0.5) * sin(radians)) - circleRadius;
 	}
 
-	// (적 이동, 총알 이동 등은 서버가 처리해서 S_GAME_STATE로 보내주므로 여기서 로직 제거)
+	// 적 이동, 총알 이동 같은건 서버가 처리해서 S_GAME_STATE로 보내주니까 로직 제거함
 
 	// 4. 보드 색상 갱신
 	for (int i = 0; i < 150; i++) {

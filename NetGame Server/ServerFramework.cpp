@@ -54,11 +54,19 @@ void AcceptLoop(SOCKET listenSocket)
                     continue;
                 }
 
-                // 락 사용해서 gameroom 보호할거임
+                // 락 사용해서 gameroom 보호
                 EnterCriticalSection(&g_GameRoom.lock);
                 int index = g_GameRoom.connectedPlayers;
                 g_GameRoom.players[index].socket = clientSocket;
                 g_GameRoom.players[index].id = index;
+                g_GameRoom.players[index].isConnected = true;
+
+                // 초기 위치 초기화
+                g_GameRoom.players[index].x = 400 + (index * 100);
+                g_GameRoom.players[index].y = 400;
+                g_GameRoom.players[index].direct = 3;
+                g_GameRoom.players[index].life = true;
+
                 g_GameRoom.connectedPlayers++;
                 LeaveCriticalSection(&g_GameRoom.lock);
 
@@ -75,7 +83,7 @@ void AcceptLoop(SOCKET listenSocket)
                     matchingComplete = true;
                 }
             }
-        } // 플레이어 3명 접속 될때 까지 무한 루프
+        }
 
 
         if (matchingComplete)
@@ -87,34 +95,26 @@ void AcceptLoop(SOCKET listenSocket)
 
             for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
             {
-                static int playerIndexes[MAX_PLAYERS_PER_ROOM];
-                playerIndexes[i] = i;
-                HANDLE hClientThread = (HANDLE)_beginthreadex(NULL, 0, ClientThread, &playerIndexes[i], 0, NULL);
+                HANDLE hClientThread = (HANDLE)_beginthreadex(NULL, 0, ClientThread, (void*)i, 0, NULL);
                 if (hClientThread) CloseHandle(hClientThread);
             }
 
             for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
             {
                 SC_MatchingCompletePacket pkt;
-
-                // 헤더 채우기
                 pkt.header.size = sizeof(SC_MatchingCompletePacket);
-                pkt.header.type = 1; // 클라의 S_MATCH_COMPLETE (1)
-
-                // 데이터 채우기 (너는 0번, 1번, 2번...)
+                pkt.header.type = S_MATCH_COMPLETE; // 1번
                 pkt.yourPlayerID = i;
 
-                // 전송
                 send(g_GameRoom.players[i].socket, (char*)&pkt, sizeof(pkt), 0);
             }
         }
     }
 }
 
-// LLD 2. P1,P2,P3 통신 스레드
 unsigned __stdcall ClientThread(void* arg)
 {
-    int playerIndex = *(int*)arg;
+    int playerIndex = (int)arg;
     SOCKET clientSocket = g_GameRoom.players[playerIndex].socket;
     char buffer[1024];
 
@@ -127,19 +127,25 @@ unsigned __stdcall ClientThread(void* arg)
         if (recvBytes == SOCKET_ERROR || recvBytes == 0) {
             printf("[ClientThread %d] Connection lost.\n", playerIndex);
             closesocket(clientSocket);
-            // TODO: 접속 종료 처리
+
+            EnterCriticalSection(&g_GameRoom.lock);
+            g_GameRoom.players[playerIndex].isConnected = false;
+            LeaveCriticalSection(&g_GameRoom.lock);
+
             break;
         }
 
-        // (LLD: 패킷 타입 분석)
-        int packetType = buffer[0];
+        PacketHeader* header = (PacketHeader*)buffer;
+        short packetType = header->type;
+        short packetSize = header->size;
+
 
         EnterCriticalSection(&g_GameRoom.lock);
         {
-            if (packetType == 10) {
+            if (packetType == C_MOVE) { // 10번
                 ProcessPlayerMove(playerIndex, buffer);
             }
-            else if (packetType == 20) {
+            else if (packetType == C_ATTACK) {
                 ProcessPlayerAttack(playerIndex, buffer);
             }
         }
@@ -162,25 +168,17 @@ unsigned __stdcall GameLoopThread(void* arg)
         }
         LeaveCriticalSection(&g_GameRoom.lock);
 
-        
         BroadcastPacket(NULL, 0);
 
         if (CheckGameEndConditions() == true) {
             break;
         }
-        Sleep(16); // 프레임은 60 정도로 일단 설정함
+        Sleep(16);
     }
 
-    EnterCriticalSection(&g_GameRoom.lock);
-    for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i) {
-        closesocket(g_GameRoom.players[i].socket);
-    }
-    g_GameRoom.connectedPlayers = 0;
-    LeaveCriticalSection(&g_GameRoom.lock);
-
+    // 종료 처리...
     return 0;
 }
-
 // 타임아웃 규칙 
 void HandleMatchingTimeout(SOCKET tempSockets[], int count) {
     printf("Matching time out. Closing sockets.\n");
