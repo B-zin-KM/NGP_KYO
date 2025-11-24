@@ -2,6 +2,7 @@
   GameLogic.c
   main.c
   ServerFramework.c
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   코드를 생성하고 있습니다...
 C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\ServerFramework.c(30,56): warning C4244: '=': 'time_t'에서 'long'(으)로 변환하면서 데이터가 손실될 수 있습니다.
@@ -11,3 +12,13 @@ C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀�
   코드를 생성하고 있습니다...
   NetGame Server.vcxproj -> C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe
 >>>>>>> Stashed changes
+=======
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\ServerFramework.c(30,56): warning C4244: '=': 'time_t'에서 'long'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+<<<<<<< HEAD
+  NetGame Server.vcxproj -> C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe
+=======
+C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\ServerFramework.c(30,56): warning C4244: '=': 'time_t'에서 'long'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  NetGame Server.vcxproj -> C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe
+>>>>>>> main
+>>>>>>> main

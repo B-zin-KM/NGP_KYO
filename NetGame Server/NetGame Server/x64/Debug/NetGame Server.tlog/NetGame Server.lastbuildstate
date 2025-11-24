@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.39.33519:TargetPlatformVersion=10.0.22621.0:
 Debug|x64|C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\|
@@ -5,3 +6,12 @@ Debug|x64|C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server
 PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.44.35207:TargetPlatformVersion=10.0.26100.0:
 Debug|x64|C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\|
 >>>>>>> Stashed changes
+=======
+<<<<<<< HEAD
+PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.44.35207:TargetPlatformVersion=10.0.26100.0:
+Debug|x64|C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\|
+=======
+PlatformToolSet=v143:VCToolArchitecture=Native64Bit:VCToolsVersion=14.43.34808:TargetPlatformVersion=10.0.22621.0:
+Debug|x64|C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\|
+>>>>>>> main
+>>>>>>> main

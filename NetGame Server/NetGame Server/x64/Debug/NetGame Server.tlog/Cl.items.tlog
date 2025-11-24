@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\Common.c;C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\Common.obj
 C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\GameLogic.c;C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\GameLogic.obj
@@ -9,3 +10,16 @@ C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀�
 C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\main.c;C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\main.obj
 C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\ServerFramework.c;C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\ServerFramework.obj
 >>>>>>> Stashed changes
+=======
+<<<<<<< HEAD
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\Common.c;C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\Common.obj
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\GameLogic.c;C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\GameLogic.obj
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\main.c;C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\main.obj
+C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\ServerFramework.c;C:\Users\82109\OneDrive\문서\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\ServerFramework.obj
+=======
+C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\Common.c;C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\Common.obj
+C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\GameLogic.c;C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\GameLogic.obj
+C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\main.c;C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\main.obj
+C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\ServerFramework.c;C:\Users\USER\Desktop\GitHub\NGP_KYO\NetGame Server\NetGame Server\x64\Debug\ServerFramework.obj
+>>>>>>> main
+>>>>>>> main
