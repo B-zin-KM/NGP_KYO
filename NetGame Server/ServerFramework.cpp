@@ -82,17 +82,30 @@ void AcceptLoop(SOCKET listenSocket)
         {
             printf("Matching complete! Starting Game...\n");
 
-            // GameLoopThread 생성 (C언어 스타일)
             HANDLE hGameLoopThread = (HANDLE)_beginthreadex(NULL, 0, GameLoopThread, NULL, 0, NULL);
             if (hGameLoopThread) CloseHandle(hGameLoopThread);
 
-            // ClientThread 3개 생성 (C언어 스타일)
             for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
             {
                 static int playerIndexes[MAX_PLAYERS_PER_ROOM];
                 playerIndexes[i] = i;
                 HANDLE hClientThread = (HANDLE)_beginthreadex(NULL, 0, ClientThread, &playerIndexes[i], 0, NULL);
                 if (hClientThread) CloseHandle(hClientThread);
+            }
+
+            for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
+            {
+                SC_MatchingCompletePacket pkt;
+
+                // 헤더 채우기
+                pkt.header.size = sizeof(SC_MatchingCompletePacket);
+                pkt.header.type = 1; // 클라의 S_MATCH_COMPLETE (1)
+
+                // 데이터 채우기 (너는 0번, 1번, 2번...)
+                pkt.yourPlayerID = i;
+
+                // 전송
+                send(g_GameRoom.players[i].socket, (char*)&pkt, sizeof(pkt), 0);
             }
         }
     }
@@ -155,9 +168,7 @@ unsigned __stdcall GameLoopThread(void* arg)
         if (CheckGameEndConditions() == true) {
             break;
         }
-        printf("."); // 확인용
-
-        Sleep(1000); // 프레임은 60 정도로 일단 설정함
+        Sleep(16); // 프레임은 60 정도로 일단 설정함
     }
 
     EnterCriticalSection(&g_GameRoom.lock);

@@ -25,7 +25,7 @@ struct C_AttackPacket : public PacketHeader {
 
 // --- 서버 -> 클라이언트 (S_XXXX) ---
 // (1) 매칭 성공 시, "당신은 0~2번입니다"라고 알려주는 패킷
-#define S_MATCH_COMPLETE 101
+#define S_MATCH_COMPLETE 1
 struct S_MatchCompletePacket : public PacketHeader {
     int yourPlayerID; // 0, 1, 2 중 하나
 };
