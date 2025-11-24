@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< Updated upstream
       <FullPath>C:\Users\User\OneDrive\바탕 화면\Github Cpp\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe</FullPath>
+=======
+      <FullPath>C:\Users\김범진\Desktop\BumJin\KPU\3-2\네트워크게임프로그래밍\텀프\NGP_KYO\NetGame Server\x64\Debug\NetGame Server.exe</FullPath>
+>>>>>>> Stashed changes
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
