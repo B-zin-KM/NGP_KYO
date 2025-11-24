@@ -157,9 +157,6 @@ void Game_Init(HWND hWnd, GameState* pGame)
 	for (int i = 0; i < 6; i++) {
 		pGame->angles[i] = 60 * i;
 	}
-
-	// 타이머 시작
-	SetTimer(hWnd, ID_GAME_LOOP, GAME_TICK_MS, NULL);
 }
 
 // --- 게임 리소스 해제 함수 ---

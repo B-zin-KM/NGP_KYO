@@ -124,4 +124,5 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam);
 void Game_HandleInput_Up(GameState* pGame, WPARAM wParam);
 void Game_Update(HWND hWnd, GameState* pGame, float deltaTime);
 void Game_Render(HDC hdc, GameState* pGame);
+void ClientMainLoop(HWND hWnd);
 int GetAmmoCount(GameState* pGame, int playerID);
