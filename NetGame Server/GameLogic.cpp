@@ -2,7 +2,7 @@
 #include "ServerFramework.h" 
 #include "SharedData.h"
 
-#define MOVE_SPEED 5 // 플레이어 이동 체크
+#define MOVE_SPEED 2 // 플레이어 이동 체크
 
 void ProcessPlayerMove(int playerIndex, char* data) {
     C_MovePacket* pkt = (C_MovePacket*)data;

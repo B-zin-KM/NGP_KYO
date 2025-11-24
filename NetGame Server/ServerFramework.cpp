@@ -173,7 +173,7 @@ unsigned __stdcall GameLoopThread(void* arg)
         if (CheckGameEndConditions() == true) {
             break;
         }
-        Sleep(16);
+        Sleep(10); // 프레임 올려뒀음 16 -> 10
     }
 
     // 종료 처리...

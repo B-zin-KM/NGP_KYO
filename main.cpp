@@ -35,8 +35,8 @@ void ClientMainLoop(HWND hWnd) {
 			DWORD curTime = GetTickCount();
 			DWORD deltaTime = curTime - prevTime;
 
-			// 60프레임(약 16ms) 유지
-			if (deltaTime < 16) {
+			// 80프레임(약 10ms) 유지
+			if (deltaTime < 10) {
 				Sleep(1);
 				continue;
 			}
