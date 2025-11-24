@@ -5,6 +5,22 @@
 #define MAX_PLAYERS_PER_ROOM 3
 #define MATCHING_TIMEOUT_SEC 30 // 우리가 하기로한 매칭 타임아웃 규칙 선언
 
+// 클라와 통일하기 위해
+#pragma pack(push, 1)
+
+// 패킷 헤더 정의 (클라와 통일한거)
+typedef struct {
+    short size;
+    short type;
+} PacketHeader;
+
+typedef struct {
+    PacketHeader header;
+    int yourPlayerID;
+} SC_MatchingCompletePacket;
+
+#pragma pack(pop)
+
 typedef struct {
     SOCKET socket;
     int id;
