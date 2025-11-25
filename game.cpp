@@ -84,14 +84,68 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 	case S_GAME_STATE:
 	{
 		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
-
+		
+		if (pGame->myPlayerID != -1) {
+			int myid = pGame->myPlayerID;
+			printf("[client] recv state: mypos(%d, %d)\n",
+				   pPkt->players[myid].x, pPkt->players[myid].y);
+		}
+		
 		// 1. 모든 플레이어의 위치/생존 정보 갱신
 		for (int i = 0; i < MAX_PLAYERS; i++) {
-			pGame->players[i].x = pPkt->players[i].x;
-			pGame->players[i].y = pPkt->players[i].y;
-			pGame->players[i].life = pPkt->players[i].life;
 
+			// 이전 프레임의 생존 여부
+			bool wasAlive = pGame->players[i].life;
+			bool isAlive = pPkt->players[i].life;
+
+			// 공통 정보 갱신
+			pGame->players[i].direct = pPkt->players[i].direct;
+			pGame->players[i].life = isAlive;
 			pGame->players[i].ammo = pPkt->players[i].ammo;
+
+			// 좌표 정보
+			int serverX = pPkt->players[i].x;
+			int serverY = pPkt->players[i].y;
+
+			if (wasAlive == FALSE && isAlive == TRUE) {
+				pGame->players[i].x = serverX;
+				pGame->players[i].y = serverY;
+				continue;
+			}
+
+			if (isAlive == FALSE) continue;
+
+			// --- 이동 보정 로직 ---
+			int myX = pGame->players[i].x;
+			int myY = pGame->players[i].y;
+			float dist = sqrt(pow(serverX - myX, 2) + pow(serverY - myY, 2));
+
+			// [CASE 1] 나
+			if (i == pGame->myPlayerID) {
+				// 1. 큰 오차 (20픽셀 이상) -> 렉 걸림/충돌 -> 즉시 강제 이동
+				if (dist > 20.0f) {
+					pGame->players[i].x = serverX;
+					pGame->players[i].y = serverY;
+				}
+				// 2. 작은 오차 (2픽셀 ~ 20픽셀) -> 미세하게 틀어짐 -> 아주 살살 당겨옴
+				else if (dist > 2.0f) {
+					pGame->players[i].x += (int)((serverX - myX) * 0.1f);
+					pGame->players[i].y += (int)((serverY - myY) * 0.1f);
+				}
+			}
+			// [CASE 2] 다른 사람
+			else {
+				// 1. 너무 멀면(30픽셀) 순간이동 (렉 복구)
+				if (dist > 30.0f) {
+					pGame->players[i].x = serverX;
+					pGame->players[i].y = serverY;
+				}
+				// 2. 평소에는 부드럽게 추적 (Lerp)
+				else {
+					pGame->players[i].x += (int)((serverX - myX) * 0.6f);
+					pGame->players[i].y += (int)((serverY - myY) * 0.6f);
+				}
+			}
 		}
 
 		// 2. 모든 적의 위치/생존 정보 갱신
@@ -143,15 +197,10 @@ void Game_Init(HWND hWnd, GameState* pGame)
 
 	// 플레이어 초기화
 	for (int i = 0; i < MAX_PLAYERS; i++) {
-		pGame->players[i].x = -100;
-		pGame->players[i].y = -100;
+		pGame->players[i].x = 600;
+		pGame->players[i].y = 400;
 		pGame->players[i].life = FALSE;
 	}
-
-	// 초기 스폰 위치 (임시)
-	pGame->players[0].x = 400; pGame->players[0].y = 400; pGame->players[0].life = TRUE;
-	pGame->players[1].x = 600; pGame->players[1].y = 400; pGame->players[1].life = TRUE;
-	pGame->players[2].x = 800; pGame->players[2].y = 400; pGame->players[2].life = TRUE;
 
 	// 회전총알 각도
 	for (int i = 0; i < 6; i++) {
@@ -173,58 +222,51 @@ void Game_Cleanup(GameState* pGame)
 // --- 키보드 입력 처리 함수 ---
 void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 {
-	if (pGame->myPlayerID == -1) return; // 매칭 전엔 조작 불가
-	int id = pGame->myPlayerID;
+	// 1. 매칭 전에는 조작 불가
+	if (pGame->myPlayerID == -1) return;
 
-	// 이동 키 (WASD) -> 내 캐릭터(id)만 조작
+	//// 2. 보낼 패킷 준비
+	//C_MovePacket pkt;
+	//pkt.size = sizeof(C_MovePacket);
+	//pkt.type = C_MOVE; // 10번 
+	//pkt.direction = 0;
+
 	switch (wParam) {
-	case 'd': case 'D':
-		if (pGame->keys['D'] == false) pGame->networkManager.SendMovePacket(1);
-		pGame->keys['D'] = true;
-		pGame->players[id].direct = 1;
-		break;
-	case 'a': case 'A':
-		if (pGame->keys['A'] == false) pGame->networkManager.SendMovePacket(2);
-		pGame->keys['A'] = true;
-		pGame->players[id].direct = 2;
-		break;
-	case 's': case 'S':
-		if (pGame->keys['S'] == false) pGame->networkManager.SendMovePacket(3);
-		pGame->keys['S'] = true;
-		pGame->players[id].direct = 3;
-		break;
-	case 'w': case 'W':
-		if (pGame->keys['W'] == false) pGame->networkManager.SendMovePacket(4);
-		pGame->keys['W'] = true;
-		pGame->players[id].direct = 4;
-		break;
+	case 'd': case 'D': pGame->keys['D'] = true; break;
+	case 'a': case 'A': pGame->keys['A'] = true; break;
+	case 's': case 'S': pGame->keys['S'] = true; break;
+	case 'w': case 'W': pGame->keys['W'] = true; break;
 	}
 
-	// 발사 키 (방향키)
-	switch (wParam) {
-	case VK_RIGHT:
-		pGame->networkManager.SendAttackPacket(1);
-		// (클라 예측 총알 발사 로직은 생략하거나 필요시 추가)
-		break;
-	case VK_LEFT:
-		pGame->networkManager.SendAttackPacket(2);
-		break;
-	case VK_DOWN:
-		pGame->networkManager.SendAttackPacket(3);
-		break;
-	case VK_UP:
-		pGame->networkManager.SendAttackPacket(4);
-		break;
+	//// 4. 이동 패킷 전송 (방향키 눌렀을 때만)
+	//if (pkt.direction != 0) {
+	//	printf("Send Move Packet: Dir %d\n", pkt.direction); // 디버깅용
+	//	pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+	//	return;
+	//}
 
-	// 재장전 로직
-	case 'r': case 'R':
-		pGame->bulletcount = 0; 
-		break;
-	case '1':
-		pGame->players[id].moojuk = !pGame->players[id].moojuk;
-		break;
+	// 5. 공격 패킷 처리 (방향키)
+	C_AttackPacket atkPkt;
+	atkPkt.size = sizeof(C_AttackPacket);
+	atkPkt.type = C_ATTACK; // 11번
+	atkPkt.direction = 0;
+
+	switch (wParam) {
+	case VK_RIGHT: atkPkt.direction = 1; break;
+	case VK_LEFT:  atkPkt.direction = 2; break;
+	case VK_DOWN:  atkPkt.direction = 3; break;
+	case VK_UP:    atkPkt.direction = 4; break;
 	}
+
+	if (atkPkt.direction != 0) {
+		pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+	}
+
+	// 기타 키 (R, 1 등) 처리
+	if (wParam == 'r' || wParam == 'R') pGame->bulletcount = 0;
+	if (wParam == '1') pGame->players[pGame->myPlayerID].moojuk = !pGame->players[pGame->myPlayerID].moojuk;
 }
+
 void Game_HandleInput_Up(GameState* pGame, WPARAM wParam)
 {
 	// 이동 키 (상태 해제)
@@ -250,30 +292,76 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 	int id = pGame->myPlayerID;
 
 
-	// 2. 로컬 예측 이동 (내 캐릭터만)
-	// (서버 응답을 기다리면 뚝뚝 끊기므로 미리 움직여 놓음)
-	if (pGame->keys['D']) {
-		pGame->players[id].x += 4;
-		// (벽 충돌 검사는 로컬에서도 해야 함 - playerVSboard 사용)
-	}
-	if (pGame->keys['A']) pGame->players[id].x -= 4;
-	if (pGame->keys['S']) pGame->players[id].y += 4;
-	if (pGame->keys['W']) pGame->players[id].y -= 4;
+	// 이동로직 수정
+	static float moveTimer = 0.0f;
+	moveTimer += deltaTime;
 
+	if (moveTimer >= 0.010f)
+	{
+		moveTimer = 0.0f;
+
+		// 1. 가로 이동 (X축) 체크
+		int dirX = 0;
+		if (pGame->keys['D']) dirX = 1;      // 우
+		else if (pGame->keys['A']) dirX = 2; // 좌
+
+		if (dirX != 0) {
+			// (1) 로컬 이동: 패킷 보낼 때 같이 움직임! (속도 3)
+			if (dirX == 1) pGame->players[id].x += 2;
+			else pGame->players[id].x -= 2;
+
+			// (2) 패킷 전송
+			C_MovePacket pkt;
+			pkt.size = sizeof(C_MovePacket);
+			pkt.type = C_MOVE;
+			pkt.direction = dirX;
+			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+		}
+
+		// --- 2. 세로 이동 (Y축) ---
+		int dirY = 0;
+		if (pGame->keys['S']) dirY = 3;      // 하
+		else if (pGame->keys['W']) dirY = 4; // 상
+
+		if (dirY != 0) {
+			// (1) 로컬 이동 (속도 3)
+			if (dirY == 3) pGame->players[id].y += 2;
+			else pGame->players[id].y -= 2;
+
+			// (2) 패킷 전송
+			C_MovePacket pkt;
+			pkt.size = sizeof(C_MovePacket);
+			pkt.type = C_MOVE;
+			pkt.direction = dirY;
+			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+		}
+	}
+
+	// 로컬 예측 이동 잠깐 주석으로 함
+	// 서버가 보내주는 좌표로만 움직이는지 확인할라고
+	// 근데 이게 왜 필요한건지 모르겠음 설명좀
+	// 위에 합쳤음 서버반응 차이때문에 클라에서 먼저 이동시키고 서버로 올리는게 이동이 부드러움
 
 	// 3. 시각 효과 (회전 총알)
+	int rotateSpeed = (int)(300.0f * deltaTime);
+	if (rotateSpeed < 1) rotateSpeed = 1;
+
 	for (int i = 0; i < 6; i++) {
-		pGame->angles[i] += 5;
-		if (pGame->angles[i] >= 360) pGame->angles[i] -= 360;
-	}
-	// 내 캐릭터 주위의 회전 총알 위치 갱신
-	for (int i = 0; i < 6; i++) {
-		double radians = pGame->angles[i] * 3.14159 / 180.0;
-		pGame->readybullet[i].x = pGame->players[id].x + playersize / 2 + static_cast<int>((playersize / 2 - circleRadius - 0.5) * cos(radians)) - circleRadius;
-		pGame->readybullet[i].y = pGame->players[id].y + playersize / 2 + static_cast<int>((playersize / 2 - circleRadius - 0.5) * sin(radians)) - circleRadius;
+		pGame->angles[i] += rotateSpeed;
+		if (pGame->angles[i] >= 360) pGame->angles[i] %= 360;
 	}
 
-	// (적 이동, 총알 이동 등은 서버가 처리해서 S_GAME_STATE로 보내주므로 여기서 로직 제거)
+	for (int i = 0; i < 6; i++) {
+		double radians = pGame->angles[i] * 3.14159 / 180.0;
+
+		pGame->readybullet[i].x = pGame->players[id].x + playersize / 2 +
+			static_cast<int>((playersize / 2 - circleRadius - 0.5) * cos(radians)) - circleRadius;
+
+		pGame->readybullet[i].y = pGame->players[id].y + playersize / 2 +
+			static_cast<int>((playersize / 2 - circleRadius - 0.5) * sin(radians)) - circleRadius;
+	}
+
+	// 적 이동, 총알 이동 같은건 서버가 처리해서 S_GAME_STATE로 보내주니까 로직 제거함
 
 	// 4. 보드 색상 갱신
 	for (int i = 0; i < 150; i++) {

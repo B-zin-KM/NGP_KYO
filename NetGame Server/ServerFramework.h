@@ -15,5 +15,6 @@ void UpdateEnemyAI();
 void CheckCollisions();
 bool CheckGameEndConditions();
 void BroadcastPacket(char* packet, int size);
+void ProcessPacket(Packet* pkt);
 
 void HandleMatchingTimeout(SOCKET tempSockets[], int count);
