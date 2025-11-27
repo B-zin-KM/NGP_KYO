@@ -416,7 +416,7 @@ void Game_Render(HDC mDC, GameState* pGame)
 
 			// ID 표시 (디버깅용)
 			wsprintf(lpOut, L"P%d", i);
-			TextOut(mDC, pGame->players[i].x, pGame->players[i].y - 15, lpOut, lstrlen(lpOut));
+			TextOut(mDC, pGame->players[i].x, pGame->players[i].y - 16, lpOut, lstrlen(lpOut));
 		}
 	}
 
