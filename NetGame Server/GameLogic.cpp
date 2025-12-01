@@ -6,6 +6,11 @@
 #define BULLET_SPEED 15 // 총알 속도
 #define MAX_AMMO 100 // 일단 총알 개수
 
+#define BOARD_SIZE 35
+#define PLAYER_SIZE 30
+#define BULLET_LEN 18   // bulletlen
+#define BULLET_THICK 8  // bulletthick
+
 void ProcessPlayerMove(int playerIndex, char* data) {
     C_MovePacket* pkt = (C_MovePacket*)data;
     Player* p = &g_GameRoom.players[playerIndex];
@@ -120,8 +125,9 @@ void UpdateEnemyAI() {
     }
 }
 
-void CheckCollisions() {
-
+// 충돌체크 함수 통합
+bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    return (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2);
 }
 
 bool CheckGameEndConditions() {

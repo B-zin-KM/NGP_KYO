@@ -50,8 +50,10 @@ struct S_GameStatePacket : public PacketHeader {
     PlayerState players[MAX_PLAYERS];
     // 적 10마리의 정보
     EnemyState enemies[MAX_ENEMIES];
-
+    // 총알 정보 (MAX 50)
     BulletState bullets[MAX_BULLETS];
+    // 보드 정보
+    bool board[150];
 };
 
 

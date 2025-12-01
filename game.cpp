@@ -1,68 +1,10 @@
 #include "game.h"
 #include "protocol.h"
 
-bool bulletVSboard(int x, int y, int x2, int y2) {					//가로총알 vs 보드 충돌체크
-	if ((x + bulletlen >= x2 && y + bulletthick >= y2) && (x <= x2 + boardsize && y <= y2 + boardsize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
 
-bool bulletVSboard2(int x, int y, int x2, int y2) {					//세로총알 vs 보드 충돌체크
-	if ((x + bulletthick >= x2 && y + bulletlen >= y2) && (x <= x2 + boardsize && y <= y2 + boardsize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool playerVSboard(int x, int y, int x2, int y2) {					//주인공 vs 보드 충돌체크
-	if ((x + playersize > x2 && y + playersize > y2) && (x < x2 + boardsize && y < y2 + boardsize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool bulletVSplayer(int x, int y, int x2, int y2) {					//가로총알 vs 적 충돌체크
-	if ((x + bulletlen >= x2 && y + bulletthick >= y2) && (x <= x2 + playersize && y <= y2 + playersize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool bulletVSplayer2(int x, int y, int x2, int y2) {				//세로총알 vs 적 충돌체크
-	if ((x + bulletthick >= x2 && y + bulletlen >= y2) && (x <= x2 + playersize && y <= y2 + playersize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool enemyVSboom(int x, int y, int x2, int y2, int boomsize) {		//적 vs 폭발 충돌체크
-	if ((x + playersize > x2 - boomsize && y + playersize > y2 - boomsize) && (x < x2 + boomsize && y < y2 + boomsize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool boardVSboom(int x, int y, int x2, int y2, int boomsize) {		//보드 vs 폭발 충돌체크
-	if ((x + boardsize > x2 - boomsize && y + boardsize > y2 - boomsize) && (x < x2 + boomsize && y < y2 + boomsize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-bool playerVSenemy(int x, int y, int x2, int y2) {					//주인공 vs 적 충돌체크
-	if ((x + playersize > x2 && y + playersize > y2) && (x < x2 + playersize && y < y2 + playersize)) {
-		return TRUE;
-	}
-	else
-		return FALSE;
+// 충돌체크 함수 통합
+bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+	return (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2);
 }
 
 
@@ -70,7 +12,9 @@ bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 {
 	for (int i = 0; i < 150; i++) {
 		if (pGame->board_easy[i].value == TRUE) continue;
-		if (playerVSboard(nextX, nextY, pGame->board_easy[i].x, pGame->board_easy[i].y)) {
+		if (CheckRectCollision(nextX, nextY, playersize, playersize,
+			pGame->board_easy[i].x, pGame->board_easy[i].y, boardsize, boardsize))
+		{
 			return true;
 		}
 	}
@@ -133,27 +77,22 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			int myY = pGame->players[i].y;
 			float dist = sqrt(pow(serverX - myX, 2) + pow(serverY - myY, 2));
 
-			// [CASE 1] 나
 			if (i == pGame->myPlayerID) {
-				// 1. 큰 오차 (20픽셀 이상) -> 렉 걸림/충돌 -> 즉시 강제 이동
 				if (dist > 20.0f) {
 					pGame->players[i].x = serverX;
 					pGame->players[i].y = serverY;
 				}
-				// 2. 작은 오차 (2픽셀 ~ 20픽셀) -> 미세하게 틀어짐 -> 아주 살살 당겨옴
 				else if (dist > 2.0f) {
 					pGame->players[i].x += (int)((serverX - myX) * 0.1f);
 					pGame->players[i].y += (int)((serverY - myY) * 0.1f);
 				}
 			}
-			// [CASE 2] 다른 사람
 			else {
-				// 1. 너무 멀면(30픽셀) 순간이동 (렉 복구)
 				if (dist > 30.0f) {
 					pGame->players[i].x = serverX;
 					pGame->players[i].y = serverY;
 				}
-				else if (dist < 3.0f) {
+				else if (dist < 5.0f) {
 					pGame->players[i].x = serverX;
 					pGame->players[i].y = serverY;
 				}
@@ -314,32 +253,46 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 	int id = pGame->myPlayerID;
 
 
-	// 이동로직 수정
+	// 2. 이동 및 패킷 전송 로직
 	static float moveTimer = 0.0f;
 	moveTimer += deltaTime;
 
-	if (moveTimer >= 0.010f) // (아까 설정한 타이머 값)
+	// 0.010초(10ms)마다 실행 (빠릿한 반응 속도)
+	if (moveTimer >= 0.010f)
 	{
 		moveTimer = 0.0f;
 
-		// --- 1. 가로 이동 (X축) ---
+		// ----------------------------------------------
+		// [X축] 가로 이동 처리
+		// ----------------------------------------------
 		int dirX = 0;
 		if (pGame->keys['D']) dirX = 1;      // 우
 		else if (pGame->keys['A']) dirX = 2; // 좌
 
 		if (dirX != 0) {
-			// [수정] 미리 가볼 좌표를 계산해 봅니다.
-			int nextX = pGame->players[id].x;
-			if (dirX == 1) nextX += 2;
-			else nextX -= 2;
+			int finalMove = 0; // 실제로 이동할 거리
 
-			// [핵심] 가려는 곳(nextX)에 벽이 없을 때만! 이동하고 패킷을 보냅니다.
-			if (CheckWallCollision(pGame, nextX, pGame->players[id].y) == false)
-			{
-				// 1. 로컬 이동 확정
-				pGame->players[id].x = nextX;
+			// (1) 먼저 2칸 이동 시도 (기본 속도)
+			int nextX = (dirX == 1) ? pGame->players[id].x + 2 : pGame->players[id].x - 2;
 
-				// 2. 패킷 전송 (벽에 막혔으면 전송도 안 함 -> 서버 트래픽 절약)
+			if (CheckWallCollision(pGame, nextX, pGame->players[id].y) == false) {
+				finalMove = 2; // 성공!
+			}
+			else {
+				// (2) 2칸이 막혔다면? 1칸이라도 이동 시도! (빈틈 메우기)
+				nextX = (dirX == 1) ? pGame->players[id].x + 1 : pGame->players[id].x - 1;
+				if (CheckWallCollision(pGame, nextX, pGame->players[id].y) == false) {
+					finalMove = 1; // 1칸 성공! (벽에 딱 붙음)
+				}
+			}
+
+			// (3) 이동 가능한 거리가 있으면 적용 및 패킷 전송
+			if (finalMove > 0) {
+				// 로컬 좌표 갱신
+				if (dirX == 1) pGame->players[id].x += finalMove;
+				else pGame->players[id].x -= finalMove;
+
+				// 서버 전송 (서버는 무조건 2씩 움직이지만, 미세 오차는 ProcessPacket에서 보정됨)
 				C_MovePacket pkt;
 				pkt.size = sizeof(C_MovePacket);
 				pkt.type = C_MOVE;
@@ -348,24 +301,35 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 			}
 		}
 
-		// --- 2. 세로 이동 (Y축) ---
+		// ----------------------------------------------
+		// [Y축] 세로 이동 처리
+		// ----------------------------------------------
 		int dirY = 0;
 		if (pGame->keys['S']) dirY = 3;      // 하
 		else if (pGame->keys['W']) dirY = 4; // 상
 
 		if (dirY != 0) {
-			// [수정] 미리 가볼 좌표 계산
-			int nextY = pGame->players[id].y;
-			if (dirY == 3) nextY += 2;
-			else nextY -= 2;
+			int finalMove = 0;
 
-			// [핵심] 벽 검사 (Y축)
-			if (CheckWallCollision(pGame, pGame->players[id].x, nextY) == false)
-			{
-				// 1. 로컬 이동 확정
-				pGame->players[id].y = nextY;
+			// (1) 2칸 이동 시도
+			int nextY = (dirY == 3) ? pGame->players[id].y + 2 : pGame->players[id].y - 2;
 
-				// 2. 패킷 전송
+			if (CheckWallCollision(pGame, pGame->players[id].x, nextY) == false) {
+				finalMove = 2;
+			}
+			else {
+				// (2) 1칸 이동 시도
+				nextY = (dirY == 3) ? pGame->players[id].y + 1 : pGame->players[id].y - 1;
+				if (CheckWallCollision(pGame, pGame->players[id].x, nextY) == false) {
+					finalMove = 1;
+				}
+			}
+
+			// (3) 적용
+			if (finalMove > 0) {
+				if (dirY == 3) pGame->players[id].y += finalMove;
+				else pGame->players[id].y -= finalMove;
+
 				C_MovePacket pkt;
 				pkt.size = sizeof(C_MovePacket);
 				pkt.type = C_MOVE;
@@ -375,20 +339,18 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 		}
 	}
 
-	// 로컬 예측 이동 잠깐 주석으로 함
-	// 서버가 보내주는 좌표로만 움직이는지 확인할라고
-	// 근데 이게 왜 필요한건지 모르겠음 설명좀
-	// 위에 합쳤음 서버반응 차이때문에 클라에서 먼저 이동시키고 서버로 올리는게 이동이 부드러움
 
 	// 3. 시각 효과 (회전 총알)
+	// deltaTime을 곱해서 프레임이 변해도 일정한 속도로 회전하게 함
 	int rotateSpeed = (int)(300.0f * deltaTime);
-	if (rotateSpeed < 1) rotateSpeed = 1;
+	if (rotateSpeed < 1) rotateSpeed = 1; // 최소 1도는 회전
 
 	for (int i = 0; i < 6; i++) {
 		pGame->angles[i] += rotateSpeed;
 		if (pGame->angles[i] >= 360) pGame->angles[i] %= 360;
 	}
 
+	// 회전한 각도에 맞춰 실제 좌표(x, y) 갱신
 	for (int i = 0; i < 6; i++) {
 		double radians = pGame->angles[i] * 3.14159 / 180.0;
 
@@ -399,12 +361,11 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 			static_cast<int>((playersize / 2 - circleRadius - 0.5) * sin(radians)) - circleRadius;
 	}
 
-	// 적 이동, 총알 이동 같은건 서버가 처리해서 S_GAME_STATE로 보내주니까 로직 제거함
 
-	// 4. 보드 색상 갱신
+	// 4. 보드 색상 갱신 (서버에서 벽이 뚫리면 여기서 색이 바뀜)
 	for (int i = 0; i < 150; i++) {
-		if (pGame->board_easy[i].value) pGame->board_easy[i].color = 255;
-		else pGame->board_easy[i].color = 30;
+		if (pGame->board_easy[i].value) pGame->board_easy[i].color = 255; // 흰색 (이동 가능)
+		else pGame->board_easy[i].color = 30;  // 검은색 (벽)
 	}
 }
 

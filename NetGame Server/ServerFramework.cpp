@@ -170,7 +170,7 @@ unsigned __stdcall GameLoopThread(void* arg)
             UpdateBullets();
 
             UpdateEnemyAI();
-            CheckCollisions();
+            //CheckCollisions();
         }
         LeaveCriticalSection(&g_GameRoom.lock);
 

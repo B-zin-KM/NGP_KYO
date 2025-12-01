@@ -14,7 +14,7 @@ void ProcessPlayerAttack(int playerIndex, char* data);
 void UpdateEnemyAI();
 void InitEnemies();
 void UpdateBullets();
-void CheckCollisions();
+bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);
 bool CheckGameEndConditions();
 void BroadcastPacket(char* packet, int size);
 void ProcessPacket(Packet* pkt);

@@ -110,14 +110,7 @@ struct GameState {
 
 
 // --- 2. 충돌 함수 선언 ---
-bool bulletVSboard(int x, int y, int x2, int y2);
-bool bulletVSboard2(int x, int y, int x2, int y2);
-bool playerVSboard(int x, int y, int x2, int y2);
-bool bulletVSplayer(int x, int y, int x2, int y2);
-bool bulletVSplayer2(int x, int y, int x2, int y2);
-bool enemyVSboom(int x, int y, int x2, int y2, int boomsize);
-bool boardVSboom(int x, int y, int x2, int y2, int boomsize);
-bool playerVSenemy(int x, int y, int x2, int y2);
+bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);
 bool CheckWallCollision(GameState* pGame, int nextX, int nextY);
 
 
