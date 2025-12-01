@@ -453,12 +453,6 @@ void Game_Render(HDC mDC, GameState* pGame)
 	HBRUSH hBrush, oldBrush;
 	TCHAR lpOut[100];
 
-	if (pGame->myPlayerID == -1) {
-		wsprintf(lpOut, L"매칭 대기 중..."); 
-		TextOut(mDC, 500, 400, lpOut, lstrlen(lpOut));
-		return;
-	}
-
 	// 1. 보드 그리기
 	for (int i = 0; i < 150; i++) {
 		hBrush = (pGame->board_easy[i].value) ? pGame->hBrushWhite : pGame->hBrushGray;

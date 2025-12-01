@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_PLAYERS 3
+#define MAX_PLAYERS 1
 #define MAX_ENEMIES 10
 #define MAX_BULLETS 50
 #define ENEMY_SPEED 1

@@ -2,7 +2,7 @@
 #include "Common.h"
 
 #define PORT 9000
-#define MAX_PLAYERS_PER_ROOM 3
+#define MAX_PLAYERS_PER_ROOM 1
 #define MATCHING_TIMEOUT_SEC 30 
 #define MAX_ENEMIES 10
 #define ENEMY_SPEED 1
