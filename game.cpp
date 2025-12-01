@@ -89,6 +89,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		pGame->connectedCount = pPkt->connectedCount;
 		for (int i = 0; i < MAX_PLAYERS; ++i) {
 			pGame->playerReadyState[i] = pPkt->players[i].isReady;
+			pGame->playerConnected[i] = pPkt->players[i].connected;
 		}
 		break;
 	}
@@ -428,19 +429,19 @@ void Game_Render(HDC mDC, GameState* pGame)
 
 		// 플레이어 목록 표시
 		for (int i = 0; i < MAX_PLAYERS; ++i) {
-			if (i < pGame->connectedCount) { // 접속한 플레이어만
+			if (pGame->playerConnected[i]) {
 				if (pGame->playerReadyState[i]) {
 					wsprintf(lpOut, L"Player %d : [READY]", i);
-					SetTextColor(mDC, RGB(0, 200, 0)); // 초록색
+					SetTextColor(mDC, RGB(0, 200, 0));
 				}
 				else {
 					wsprintf(lpOut, L"Player %d : Waiting...", i);
-					SetTextColor(mDC, RGB(255, 0, 0)); // 빨간색
+					SetTextColor(mDC, RGB(255, 0, 0));
 				}
 			}
 			else {
 				wsprintf(lpOut, L"Player %d : (Empty)", i);
-				SetTextColor(mDC, RGB(100, 100, 100)); // 회색
+				SetTextColor(mDC, RGB(100, 100, 100));
 			}
 			TextOut(mDC, 500, 300 + (i * 30), lpOut, lstrlen(lpOut));
 		}

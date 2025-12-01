@@ -162,7 +162,17 @@ void UpdateBullets() {
 
 void BroadcastPacket(char* packet, int size)
 {
-    
+    if (packet != NULL)
+    {
+        for (int i = 0; i < MAX_PLAYERS_PER_ROOM; i++)
+        {
+            if (g_GameRoom.players[i].isConnected) {
+                send(g_GameRoom.players[i].socket, packet, size, 0);
+            }
+        }
+        return; 
+    }
+
     if (packet == NULL)
     {
         S_GameStatePacket statePkt;

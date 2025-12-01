@@ -105,6 +105,8 @@ struct GameState {
 
 	// 로비	관련 변수
 	bool playerReadyState[MAX_PLAYERS] = { false }; // 각 플레이어의 준비 상태
+	bool playerConnected[MAX_PLAYERS] = { false };
+
 	int connectedCount = 0;
 
 	// (GDI 리소스)
