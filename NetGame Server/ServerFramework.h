@@ -12,6 +12,7 @@ unsigned __stdcall GameLoopThread(void* arg);
 void ProcessPlayerMove(int playerIndex, char* data);
 void ProcessPlayerAttack(int playerIndex, char* data);
 void UpdateEnemyAI();
+void InitGameMap();
 void InitEnemies();
 void UpdateBullets();
 bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);

@@ -7,6 +7,11 @@
 #define MAX_ENEMIES 10
 #define ENEMY_SPEED 1
 
+#define BOARD_SIZE 35
+#define PLAYER_SIZE 30
+#define BULLET_SIZE_W 18 
+#define BULLET_SIZE_H 8
+
 // 큐 관련 상수 (이것도 필요합니다)
 #define MAX_PACKET_QUEUE_SIZE 200 
 #define MAX_PACKET_DATA_SIZE 1024 
@@ -57,6 +62,9 @@ typedef struct {
     EnemyState enemies[MAX_ENEMIES];
 
     BulletState bullets[MAX_BULLETS];
+
+    bool board[150];
+
 } S_GameStatePacket;
 
 
@@ -91,7 +99,12 @@ typedef struct {
 } PacketQueue;
 // ==========================================================
 
-
+// 서버 내부 보드 구조체
+struct SERVER_BOARD {
+    int x, y;
+    bool value; // TRUE: 이동 가능(흰색), FALSE: 벽(검은색)
+};
+extern SERVER_BOARD g_Board[150];
 
 // 서버 내부 Player 구조체
 typedef struct {
@@ -120,6 +133,8 @@ typedef struct {
     BulletState bullets[MAX_BULLETS];
 
     EnemyState enemies[MAX_ENEMIES];
+
+    bool board[150];
 
 } GameRoom;
 

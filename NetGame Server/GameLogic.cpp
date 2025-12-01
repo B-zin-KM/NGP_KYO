@@ -11,6 +11,32 @@
 #define BULLET_LEN 18   // bulletlen
 #define BULLET_THICK 8  // bulletthick
 
+
+SERVER_BOARD g_Board[150];
+void InitGameMap() {
+
+    int boardnum = 0;
+    // 1. 전체 맵 생성
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 15; j++) {
+            g_Board[boardnum].x = j * BOARD_SIZE + 335;
+            g_Board[boardnum].y = i * BOARD_SIZE + 240;
+            g_Board[boardnum].value = false;
+            boardnum++;
+        }
+    }
+
+    // 2. 초기 이동 가능 구역 설정 (하얀색)
+    // (클라의 j, k 루프와 동일)
+    for (int j = 3; j < 7; j++) {
+        for (int k = 5; k < 10; k++) {
+            g_Board[j * 15 + k].value = true;
+        }
+    }
+    printf("[Server Debug] 맵 생성 완료!\n");
+}
+
+
 void ProcessPlayerMove(int playerIndex, char* data) {
     C_MovePacket* pkt = (C_MovePacket*)data;
     Player* p = &g_GameRoom.players[playerIndex];
