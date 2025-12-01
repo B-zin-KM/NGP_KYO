@@ -2,7 +2,7 @@
 #include "Common.h"
 
 #define PORT 9000
-#define MAX_PLAYERS_PER_ROOM 1
+#define MAX_PLAYERS_PER_ROOM 3
 #define MATCHING_TIMEOUT_SEC 30 
 #define MAX_ENEMIES 10
 #define ENEMY_SPEED 1
@@ -59,6 +59,25 @@ typedef struct {
     BulletState bullets[MAX_BULLETS];
 } S_GameStatePacket;
 
+#define S_LOBBY_UPDATE 4
+typedef struct {
+    PacketHeader header;
+    int connectedCount;
+    struct {
+        bool connected;
+        bool isReady;
+    } players[MAX_PLAYERS_PER_ROOM];
+} S_LobbyUpdatePacket;
+
+#define S_GAME_START 5
+typedef struct {
+    PacketHeader header;
+} S_GameStartPacket;
+
+#define C_REQ_READY 3
+typedef struct {
+    PacketHeader header;
+} C_ReqReadyPacket;
 
 // 10. 이동 요청 패킷
 #define C_MOVE 10
@@ -109,6 +128,7 @@ typedef struct {
     bool life;
     int ammo;
 
+	bool isReady; // 로비 준비 상태
 } Player;
 
 typedef struct {

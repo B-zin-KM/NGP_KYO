@@ -90,12 +90,9 @@ void AcceptLoop(SOCKET listenSocket)
 
         if (matchingComplete)
         {
-            printf("Matching complete! Starting Game...\n");
+            printf("Matching complete! Entering Lobby...\n");
 
-            InitEnemies();
-
-            HANDLE hGameLoopThread = (HANDLE)_beginthreadex(NULL, 0, GameLoopThread, NULL, 0, NULL);
-            if (hGameLoopThread) CloseHandle(hGameLoopThread);
+            InitEnemies(); // 적 초기화
 
             for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
             {
@@ -103,14 +100,73 @@ void AcceptLoop(SOCKET listenSocket)
                 if (hClientThread) CloseHandle(hClientThread);
             }
 
+            EnterCriticalSection(&g_GameRoom.lock);
             for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i)
             {
+                g_GameRoom.players[i].isReady = false; // 준비 상태 초기화
+
                 SC_MatchingCompletePacket pkt;
-                pkt.header.size = sizeof(SC_MatchingCompletePacket);
+                pkt.header.size = sizeof(pkt);
                 pkt.header.type = S_MATCH_COMPLETE; // 1번
                 pkt.yourPlayerID = i;
-
                 send(g_GameRoom.players[i].socket, (char*)&pkt, sizeof(pkt), 0);
+            }
+            LeaveCriticalSection(&g_GameRoom.lock);
+
+            //3. 로비 대기 루프 
+            while (true)
+            {
+                int readyCount = 0;
+                int connectedCount = 0;
+
+                // 로비 상태 패킷 생성 (S_LOBBY_UPDATE)
+                S_LobbyUpdatePacket lobbyPkt;
+                lobbyPkt.header.size = sizeof(lobbyPkt);
+                lobbyPkt.header.type = S_LOBBY_UPDATE; // 4번
+
+                EnterCriticalSection(&g_GameRoom.lock);
+                {
+                    for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i) {
+                        if (g_GameRoom.players[i].isConnected) {
+                            connectedCount++;
+                            if (g_GameRoom.players[i].isReady) readyCount++;
+                        }
+                        lobbyPkt.players[i].connected = g_GameRoom.players[i].isConnected;
+                        lobbyPkt.players[i].isReady = g_GameRoom.players[i].isReady;
+                    }
+                    lobbyPkt.connectedCount = connectedCount;
+
+                    // 로비 상태 브로드캐스트
+                    BroadcastPacket((char*)&lobbyPkt, lobbyPkt.header.size);
+                }
+                LeaveCriticalSection(&g_GameRoom.lock);
+
+                // ★ 모두 준비 완료되면 게임 시작
+                if (readyCount == MAX_PLAYERS_PER_ROOM) {
+                    printf("All players Ready! Starting Game...\n");
+
+                    // 게임 시작 신호 전송 (S_GAME_START)
+                    S_GameStartPacket startPkt;
+                    startPkt.header.size = sizeof(startPkt);
+                    startPkt.header.type = S_GAME_START; // 5번
+
+                    EnterCriticalSection(&g_GameRoom.lock);
+                    BroadcastPacket((char*)&startPkt, startPkt.header.size);
+                    LeaveCriticalSection(&g_GameRoom.lock);
+
+                    break; // 로비 루프 탈출 -> 게임 루프 시작
+                }
+
+                if (connectedCount == 0) break; // 접속 끊기면 탈출
+
+                Sleep(100); // 0.1초마다 로비 상태 체크
+            }
+
+            // 4. GameLoopThread 생성 (이제 진짜 게임 시작)
+            HANDLE hGameLoopThread = (HANDLE)_beginthreadex(NULL, 0, GameLoopThread, NULL, 0, NULL);
+            if (hGameLoopThread) {
+                WaitForSingleObject(hGameLoopThread, INFINITE);
+                CloseHandle(hGameLoopThread);
             }
         }
     }
