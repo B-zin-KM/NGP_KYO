@@ -2,7 +2,7 @@
 
 #define MAX_PLAYERS 3
 #define MAX_ENEMIES 10
-
+#define MAX_BULLETS 50
 // 1바이트 정렬 시작
 #pragma pack(push, 1)
 
@@ -37,11 +37,20 @@ struct EnemyState {
     int direct;
 };
 
+struct BulletState {
+    bool active; // 활성화 여부
+    int x, y;
+    int direct;  // 방향
+    int ownerID; // 주인 ID
+};
+
 struct S_GameStatePacket : public PacketHeader {
     // 플레이어 3명의 정보
     PlayerState players[MAX_PLAYERS];
     // 적 10마리의 정보
     EnemyState enemies[MAX_ENEMIES];
+
+    BulletState bullets[MAX_BULLETS];
 };
 
 
