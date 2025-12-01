@@ -10,6 +10,18 @@ bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, 
 
 bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 {
+	// 보드판 가장자리 충돌검사
+	const int MAP_LEFT = 335;
+	const int MAP_TOP = 240;
+	const int MAP_RIGHT = 335 + (15 * 35);
+	const int MAP_BOTTOM = 240 + (10 * 35);
+
+	if (nextX < MAP_LEFT) return true;
+	if (nextY < MAP_TOP) return true;
+	if (nextX > MAP_RIGHT - playersize) return true;
+	if (nextY > MAP_BOTTOM - playersize) return true;
+
+	// 검은타일과 충돌검사
 	for (int i = 0; i < 150; i++) {
 		if (pGame->board_easy[i].value == TRUE) continue;
 		if (CheckRectCollision(nextX, nextY, playersize, playersize,
