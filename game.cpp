@@ -153,7 +153,10 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 					pGame->players[i].x = serverX;
 					pGame->players[i].y = serverY;
 				}
-				// 2. 평소에는 부드럽게 추적 (Lerp)
+				else if (dist < 3.0f) {
+					pGame->players[i].x = serverX;
+					pGame->players[i].y = serverY;
+				}
 				else {
 					pGame->players[i].x += (int)((serverX - myX) * 0.6f);
 					pGame->players[i].y += (int)((serverY - myY) * 0.6f);
