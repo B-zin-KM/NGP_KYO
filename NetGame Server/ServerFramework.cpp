@@ -92,6 +92,8 @@ void AcceptLoop(SOCKET listenSocket)
         {
             printf("Matching complete! Starting Game...\n");
 
+            InitEnemies();
+
             HANDLE hGameLoopThread = (HANDLE)_beginthreadex(NULL, 0, GameLoopThread, NULL, 0, NULL);
             if (hGameLoopThread) CloseHandle(hGameLoopThread);
 

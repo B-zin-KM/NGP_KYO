@@ -161,6 +161,8 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		break;
 	}
 
+
+
 	default:
 		printf("알 수 없는 패킷 타입 수신: %d\n", pHeader->type);
 		break;
@@ -440,7 +442,9 @@ void Game_Render(HDC mDC, GameState* pGame)
 	oldBrush = (HBRUSH)SelectObject(mDC, pGame->hBrushRed);
 	for (int i = 0; i < MAX_ENEMIES; i++) {
 		if (pGame->enemies[i].life) {
-			RoundRect(mDC, pGame->enemies[i].x, pGame->enemies[i].y, pGame->enemies[i].x + playersize, pGame->enemies[i].y + playersize, 10, 10);
+			// 서버가 준 좌표대로 그리기
+			RoundRect(mDC, pGame->enemies[i].x, pGame->enemies[i].y,
+				pGame->enemies[i].x + playersize, pGame->enemies[i].y + playersize, 10, 10);
 		}
 	}
 	SelectObject(mDC, oldBrush);

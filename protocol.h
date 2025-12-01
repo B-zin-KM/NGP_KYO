@@ -3,6 +3,7 @@
 #define MAX_PLAYERS 3
 #define MAX_ENEMIES 10
 #define MAX_BULLETS 50
+#define ENEMY_SPEED 1
 // 1바이트 정렬 시작
 #pragma pack(push, 1)
 

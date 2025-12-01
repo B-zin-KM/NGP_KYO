@@ -5,6 +5,7 @@
 #define MAX_PLAYERS_PER_ROOM 3
 #define MATCHING_TIMEOUT_SEC 30 
 #define MAX_ENEMIES 10
+#define ENEMY_SPEED 1
 
 // 큐 관련 상수 (이것도 필요합니다)
 #define MAX_PACKET_QUEUE_SIZE 200 
@@ -118,7 +119,7 @@ typedef struct {
 
     BulletState bullets[MAX_BULLETS];
 
-    // (적 정보 등 추가 가능)
+    EnemyState enemies[MAX_ENEMIES];
 
 } GameRoom;
 

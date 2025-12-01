@@ -64,8 +64,60 @@ void ProcessPlayerAttack(int playerIndex, char* data) {
     }
 }
 
-void UpdateEnemyAI() {
+void InitEnemies() {
+    // (게임 시작 시 한 번 호출됨)
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        g_GameRoom.enemies[i].life = true;
 
+        // 맵 크기(0~900, 0~800) 안에서 랜덤 위치
+        g_GameRoom.enemies[i].x = rand() % 800 + 50;
+        g_GameRoom.enemies[i].y = rand() % 700 + 50;
+
+        g_GameRoom.enemies[i].direct = 0;
+    }
+    printf("[SERVER] 10 Enemies Spawned!\n");
+}
+
+void UpdateEnemyAI() {
+    // 모든 적에 대해 반복
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        EnemyState* e = &g_GameRoom.enemies[i];
+        if (e->life == false) continue; // 죽은 적은 무시
+
+        // 1) 가장 가까운 플레이어 찾기
+        int targetIndex = -1;
+        double minDistance = 999999.0;
+
+        for (int p = 0; p < MAX_PLAYERS_PER_ROOM; p++)
+        {
+            Player* player = &g_GameRoom.players[p];
+            if (player->life == false || player->isConnected == false) continue;
+
+            // 거리 계산 (피타고라스 정리)
+            double dist = sqrt(pow(player->x - e->x, 2) + pow(player->y - e->y, 2));
+
+            if (dist < minDistance) {
+                minDistance = dist;
+                targetIndex = p;
+            }
+        }
+
+        // 2) 추적 이동 (타겟이 있다면)
+        if (targetIndex != -1)
+        {
+            Player* target = &g_GameRoom.players[targetIndex];
+
+            // X축 이동
+            if (e->x < target->x) e->x += ENEMY_SPEED;
+            else if (e->x > target->x) e->x -= ENEMY_SPEED;
+
+            // Y축 이동
+            if (e->y < target->y) e->y += ENEMY_SPEED;
+            else if (e->y > target->y) e->y -= ENEMY_SPEED;
+        }
+    }
 }
 
 void CheckCollisions() {
@@ -131,6 +183,10 @@ void BroadcastPacket(char* packet, int size)
 
         for (int i = 0; i < MAX_BULLETS; i++) {
             statePkt.bullets[i] = g_GameRoom.bullets[i]; // 통째로 복사
+        }
+
+        for (int i = 0; i < MAX_ENEMIES; i++) {
+            statePkt.enemies[i] = g_GameRoom.enemies[i];
         }
 
         for (int i = 0; i < MAX_PLAYERS_PER_ROOM; i++)
