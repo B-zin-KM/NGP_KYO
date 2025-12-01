@@ -67,6 +67,8 @@ void AcceptLoop(SOCKET listenSocket)
                 g_GameRoom.players[index].direct = 3;
                 g_GameRoom.players[index].life = true;
 
+                g_GameRoom.players[index].ammo = MAX_BULLETS;
+
                 g_GameRoom.connectedPlayers++;
                 LeaveCriticalSection(&g_GameRoom.lock);
 
@@ -163,6 +165,8 @@ unsigned __stdcall GameLoopThread(void* arg)
     {
         EnterCriticalSection(&g_GameRoom.lock);
         {
+            UpdateBullets();
+
             UpdateEnemyAI();
             CheckCollisions();
         }

@@ -154,6 +154,10 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			pGame->enemies[i].y = pPkt->enemies[i].y;
 			pGame->enemies[i].life = pPkt->enemies[i].life;
 		}
+
+		for (int i = 0; i < MAX_BULLETS; i++) {
+			pGame->serverBullets[i] = pPkt->bullets[i];
+		}
 		break;
 	}
 
@@ -390,14 +394,18 @@ void Game_Render(HDC mDC, GameState* pGame)
 		SelectObject(mDC, oldBrush);
 	}
 
-	// 2. 총알 그리기 (서버에서 총알 정보를 아직 안 보내주므로, 로컬 bullet 배열 사용 - 추후 수정 필요)
+	
 	oldBrush = (HBRUSH)SelectObject(mDC, pGame->hBrushBlack);
-	for (int i = 0; i < pGame->bulletcount; i++) {
-		if (pGame->bullet[i].shot) {
-			if (pGame->bullet[i].direct == 1 || pGame->bullet[i].direct == 2)
-				Rectangle(mDC, pGame->bullet[i].x, pGame->bullet[i].y, pGame->bullet[i].x + bulletlen, pGame->bullet[i].y + bulletthick);
-			else
-				Rectangle(mDC, pGame->bullet[i].x, pGame->bullet[i].y, pGame->bullet[i].x + bulletthick, pGame->bullet[i].y + bulletlen);
+	for (int i = 0; i < MAX_BULLETS; i++) {
+		if (pGame->serverBullets[i].active) {
+            int bx = pGame->serverBullets[i].x;
+            int by = pGame->serverBullets[i].y;
+            int dir = pGame->serverBullets[i].direct;
+
+			if (dir == 1 || dir == 2) // 가로
+				Rectangle(mDC, bx, by, bx + bulletlen, by + bulletthick);
+			else // 세로
+				Rectangle(mDC, bx, by, bx + bulletthick, by + bulletlen);
 		}
 	}
 
