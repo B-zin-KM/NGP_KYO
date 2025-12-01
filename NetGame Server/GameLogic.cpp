@@ -162,7 +162,7 @@ void UpdateBullets() {
 
 void BroadcastPacket(char* packet, int size)
 {
-    if (packet != NULL)
+   /* if (packet != NULL)
     {
         for (int i = 0; i < MAX_PLAYERS_PER_ROOM; i++)
         {
@@ -171,7 +171,8 @@ void BroadcastPacket(char* packet, int size)
             }
         }
         return; 
-    }
+    }*/
+
     if (packet == NULL)
     {
         S_GameStatePacket statePkt;

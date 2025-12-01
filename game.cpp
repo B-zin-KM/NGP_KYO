@@ -68,6 +68,9 @@ bool playerVSenemy(int x, int y, int x2, int y2) {					//주인공 vs 적 충돌체크
 // --- 네트워크 패킷 처리 함수 ---
 void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 {
+	if (pHeader->type == 5) { // 5번 = S_GAME_START
+		printf("!!! [DEBUG] GAME START PACKET RECEIVED !!!\n");
+	}
 	// 서버로부터 받은 패킷 타입에 따라 분기
 	switch (pHeader->type)
 	{
