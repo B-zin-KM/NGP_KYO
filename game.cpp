@@ -37,6 +37,9 @@ bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 // --- 네트워크 패킷 처리 함수 ---
 void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 {
+	if (pHeader->type == 5) { // 5번 = S_GAME_START
+		printf("!!! [DEBUG] GAME START PACKET RECEIVED !!!\n");
+	}
 	// 서버로부터 받은 패킷 타입에 따라 분기
 	switch (pHeader->type)
 	{
@@ -49,9 +52,31 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		break;
 	}
 
+	case S_LOBBY_UPDATE:
+	{
+		S_LobbyUpdatePacket* pPkt = (S_LobbyUpdatePacket*)pHeader;
+		pGame->connectedCount = pPkt->connectedCount;
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			pGame->playerReadyState[i] = pPkt->players[i].isReady;
+			pGame->playerConnected[i] = pPkt->players[i].connected;
+		}
+		break;
+	}
+
+	case S_GAME_START:
+	{
+		pGame->currentScene = SCENE_INGAME; 
+		printf("Game Started!\n");
+		break;
+	}
+
 	// (2) "게임 상태" 패킷 처리
 	case S_GAME_STATE:
 	{
+		if (pGame->currentScene == SCENE_LOBBY) {
+			pGame->currentScene = SCENE_INGAME;
+			printf("Auto-switched to InGame Scene!\n");
+		}
 		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
 		
 		if (pGame->myPlayerID != -1) {
@@ -201,6 +226,17 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 {
 	// 1. 매칭 전에는 조작 불가
 	if (pGame->myPlayerID == -1) return;
+
+	if (pGame->currentScene == SCENE_LOBBY) {
+		if (wParam == 'r' || wParam == 'R') {
+			// 준비 패킷 전송
+			C_ReqReadyPacket pkt;
+			pkt.size = sizeof(pkt);
+			pkt.type = C_REQ_READY;
+			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+		}
+		return; // 로비에서는 이동/공격 불가
+	}
 
 	//// 2. 보낼 패킷 준비
 	//C_MovePacket pkt;
@@ -388,14 +424,51 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 // ---  그리기 전용 함수 ---
 void Game_Render(HDC mDC, GameState* pGame)
 {
-	HBRUSH hBrush, oldBrush;
-	TCHAR lpOut[100];
+	// --- 로비 화면 그리기 ---
+	if (pGame->currentScene == SCENE_LOBBY)
+	{
+		TCHAR lpOut[100];
 
-	if (pGame->myPlayerID == -1) {
-		wsprintf(lpOut, L"매칭 대기 중... (%d/3)", 0); // (서버가 현재 인원수도 보내주면 좋음)
-		TextOut(mDC, 500, 400, lpOut, lstrlen(lpOut));
+		// 배경 (흰색)
+		Rectangle(mDC, 0, 0, 1200, 900);
+
+		// 제목
+		wsprintf(lpOut, L"=== GAME LOBBY ===");
+		TextOut(mDC, 500, 200, lpOut, lstrlen(lpOut));
+
+		// 플레이어 목록 표시
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			if (pGame->playerConnected[i]) {
+				if (pGame->playerReadyState[i]) {
+					wsprintf(lpOut, L"Player %d : [READY]", i);
+					SetTextColor(mDC, RGB(0, 200, 0));
+				}
+				else {
+					wsprintf(lpOut, L"Player %d : Waiting...", i);
+					SetTextColor(mDC, RGB(255, 0, 0));
+				}
+			}
+			else {
+				wsprintf(lpOut, L"Player %d : (Empty)", i);
+				SetTextColor(mDC, RGB(100, 100, 100));
+			}
+			TextOut(mDC, 500, 300 + (i * 30), lpOut, lstrlen(lpOut));
+		}
+
+		// 내 상태 표시
+		SetTextColor(mDC, RGB(0, 0, 0)); // 검은색 복귀
+		if (pGame->myPlayerID != -1) {
+			wsprintf(lpOut, L"My ID: %d (Press 'R' to Ready)", pGame->myPlayerID);
+			TextOut(mDC, 500, 500, lpOut, lstrlen(lpOut));
+		}
+		else {
+			TextOut(mDC, 500, 500, L"Connecting to Server...", 23);
+		}
 		return;
 	}
+
+	HBRUSH hBrush, oldBrush;
+	TCHAR lpOut[100];
 
 	// 1. 보드 그리기
 	for (int i = 0; i < 150; i++) {

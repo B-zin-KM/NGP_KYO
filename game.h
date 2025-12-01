@@ -69,6 +69,11 @@ struct ENEMY {
 	bool boom = FALSE;
 };
 
+enum Scene {
+	SCENE_LOBBY,
+	SCENE_INGAME
+};
+
 struct GameState {
 
 	int myPlayerID = -1; // 서버가 알려줄 내 ID (0, 1, 2)
@@ -95,6 +100,14 @@ struct GameState {
 	float enemyMoveTimer = 0.0f;
 
 	BulletState serverBullets[MAX_BULLETS];
+
+	Scene currentScene = SCENE_LOBBY;
+
+	// 로비	관련 변수
+	bool playerReadyState[MAX_PLAYERS] = { false }; // 각 플레이어의 준비 상태
+	bool playerConnected[MAX_PLAYERS] = { false };
+
+	int connectedCount = 0;
 
 	// (GDI 리소스)
 	HBRUSH hBrushBlack;

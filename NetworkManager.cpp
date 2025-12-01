@@ -205,3 +205,4 @@ bool NetworkManager::PopPacket(char* buffer, int bufferSize)
 
     return true;
 }
+

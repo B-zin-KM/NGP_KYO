@@ -208,7 +208,17 @@ void UpdateBullets() {
 
 void BroadcastPacket(char* packet, int size)
 {
-  
+    if (packet != NULL)
+    {
+        for (int i = 0; i < MAX_PLAYERS_PER_ROOM; i++)
+        {
+            if (g_GameRoom.players[i].isConnected) {
+                send(g_GameRoom.players[i].socket, packet, size, 0);
+            }
+        }
+        return; 
+    }
+
     if (packet == NULL)
     {
         S_GameStatePacket statePkt;
@@ -223,7 +233,6 @@ void BroadcastPacket(char* packet, int size)
             statePkt.players[i].direct = g_GameRoom.players[i].direct;
             statePkt.players[i].life = true; // 일단 다 살았다고 가정
 
-            // 나중에 적 정보도 여기서 복사
         }
         LeaveCriticalSection(&g_GameRoom.lock);
 

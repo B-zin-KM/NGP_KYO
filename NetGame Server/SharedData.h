@@ -14,7 +14,7 @@
 
 // 큐 관련 상수 (이것도 필요합니다)
 #define MAX_PACKET_QUEUE_SIZE 200 
-#define MAX_PACKET_DATA_SIZE 1024 
+#define MAX_PACKET_DATA_SIZE 2048
 
 #define MAX_BULLETS 50 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
 
@@ -67,6 +67,25 @@ typedef struct {
 
 } S_GameStatePacket;
 
+#define S_LOBBY_UPDATE 4
+typedef struct {
+    PacketHeader header;
+    int connectedCount;
+    struct {
+        bool connected;
+        bool isReady;
+    } players[MAX_PLAYERS_PER_ROOM];
+} S_LobbyUpdatePacket;
+
+#define S_GAME_START 5
+typedef struct {
+    PacketHeader header;
+} S_GameStartPacket;
+
+#define C_REQ_READY 3
+typedef struct {
+    PacketHeader header;
+} C_ReqReadyPacket;
 
 // 10. 이동 요청 패킷
 #define C_MOVE 10
@@ -122,6 +141,7 @@ typedef struct {
     bool life;
     int ammo;
 
+	bool isReady; // 로비 준비 상태
 } Player;
 
 typedef struct {
