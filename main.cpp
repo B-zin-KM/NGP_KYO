@@ -1,6 +1,6 @@
 #include "game.h"
 
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console") //콘솔창 띄우기
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console") //콘솔창 띄우기
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";

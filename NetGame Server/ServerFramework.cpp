@@ -121,7 +121,7 @@ void AcceptLoop(SOCKET listenSocket)
 
                 // 로비 상태 패킷 생성 (S_LOBBY_UPDATE)
                 S_LobbyUpdatePacket lobbyPkt;
-                lobbyPkt.header.size = sizeof(lobbyPkt);
+                lobbyPkt.header.size = sizeof(S_LobbyUpdatePacket);
                 lobbyPkt.header.type = S_LOBBY_UPDATE; // 4번
 
                 EnterCriticalSection(&g_GameRoom.lock);
@@ -207,6 +207,10 @@ unsigned __stdcall ClientThread(void* arg)
             }
             else if (packetType == C_ATTACK) {
                 ProcessPlayerAttack(playerIndex, buffer);
+            }
+            else if (header->type == C_REQ_READY) { 
+                g_GameRoom.players[playerIndex].isReady = !g_GameRoom.players[playerIndex].isReady;
+                printf("Player %d Ready State: %d\n", playerIndex, g_GameRoom.players[playerIndex].isReady);
             }
         }
         LeaveCriticalSection(&g_GameRoom.lock);

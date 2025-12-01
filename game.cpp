@@ -103,6 +103,10 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 	// (2) "게임 상태" 패킷 처리
 	case S_GAME_STATE:
 	{
+		if (pGame->currentScene == SCENE_LOBBY) {
+			pGame->currentScene = SCENE_INGAME;
+			printf("Auto-switched to InGame Scene!\n");
+		}
 		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
 		
 		if (pGame->myPlayerID != -1) {
