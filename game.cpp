@@ -113,10 +113,14 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		for (int i = 0; i < MAX_BULLETS; i++) {
 			pGame->serverBullets[i] = pPkt->bullets[i];
 		}
+
+		// 3. 보드판 갱신
+		for (int i = 0; i < 150; i++) {
+			pGame->board_easy[i].value = pPkt->board[i];
+		}
+
 		break;
 	}
-
-
 
 	default:
 		printf("알 수 없는 패킷 타입 수신: %d\n", pHeader->type);

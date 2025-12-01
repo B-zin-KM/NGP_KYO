@@ -187,8 +187,22 @@ void UpdateBullets() {
             b->active = false;
         }
 
-        // (3) 벽 충돌 체크 (나중에 구현)
-        // if (CheckBulletCollision(b)) b->active = false;
+        // (3) 벽 충돌 체크
+        int bW = (b->direct == 1 || b->direct == 2) ? BULLET_SIZE_W : BULLET_SIZE_H;
+        int bH = (b->direct == 1 || b->direct == 2) ? BULLET_SIZE_H : BULLET_SIZE_W;
+
+        for (int k = 0; k < 150; k++) {
+
+            if (g_Board[k].value == true) continue;
+
+            if (CheckRectCollision(b->x, b->y, bW, bH,
+                g_Board[k].x, g_Board[k].y, BOARD_SIZE, BOARD_SIZE))
+            {
+                printf("벽vs총알 충돌! \n");
+                g_Board[k].value = true;
+                break;
+            }
+        }
     }
 }
 
@@ -219,6 +233,10 @@ void BroadcastPacket(char* packet, int size)
 
         for (int i = 0; i < MAX_ENEMIES; i++) {
             statePkt.enemies[i] = g_GameRoom.enemies[i];
+        }
+
+        for (int i = 0; i < 150; i++) {
+            statePkt.board[i] = g_Board[i].value;
         }
 
         for (int i = 0; i < MAX_PLAYERS_PER_ROOM; i++)
