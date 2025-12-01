@@ -14,6 +14,7 @@
 #define playersize 30
 #define bulletlen 18
 #define bulletthick 8
+#define MAX_BULLETS 50
 #define circleDiameter 9
 #define circleRadius 4.5
 
@@ -92,6 +93,8 @@ struct GameState {
 	bool keys[256] = { false };
 	float scoreTimer = 0.0f;
 	float enemyMoveTimer = 0.0f;
+
+	BulletState serverBullets[MAX_BULLETS];
 
 	// (GDI ¸®¼Ò½º)
 	HBRUSH hBrushBlack;

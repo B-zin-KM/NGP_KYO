@@ -5,10 +5,13 @@
 #define MAX_PLAYERS_PER_ROOM 3
 #define MATCHING_TIMEOUT_SEC 30 
 #define MAX_ENEMIES 10
+#define ENEMY_SPEED 1
 
 // 큐 관련 상수 (이것도 필요합니다)
 #define MAX_PACKET_QUEUE_SIZE 200 
 #define MAX_PACKET_DATA_SIZE 1024 
+
+#define MAX_BULLETS 50 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
 
 // 클라와 통일하기 위해 1바이트 정렬
 #pragma pack(push, 1)
@@ -18,6 +21,13 @@ typedef struct {
     short size;
     short type;
 } PacketHeader;
+
+typedef struct {
+    bool active;
+    int x, y;
+    int direct;
+    int ownerID;
+}BulletState;
 
 // 1. 매칭 완료 패킷
 #define S_MATCH_COMPLETE 1
@@ -45,6 +55,8 @@ typedef struct {
     PacketHeader header;
     PlayerState players[MAX_PLAYERS_PER_ROOM];
     EnemyState enemies[MAX_ENEMIES];
+
+    BulletState bullets[MAX_BULLETS];
 } S_GameStatePacket;
 
 
@@ -80,6 +92,7 @@ typedef struct {
 // ==========================================================
 
 
+
 // 서버 내부 Player 구조체
 typedef struct {
     SOCKET socket;
@@ -104,7 +117,9 @@ typedef struct {
 
     CRITICAL_SECTION lock;
 
-    // (적 정보 등 추가 가능)
+    BulletState bullets[MAX_BULLETS];
+
+    EnemyState enemies[MAX_ENEMIES];
 
 } GameRoom;
 
