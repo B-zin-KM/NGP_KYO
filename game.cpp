@@ -80,6 +80,23 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		break;
 	}
 
+	case S_LOBBY_UPDATE:
+	{
+		S_LobbyUpdatePacket* pPkt = (S_LobbyUpdatePacket*)pHeader;
+		pGame->connectedCount = pPkt->connectedCount;
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			pGame->playerReadyState[i] = pPkt->players[i].isReady;
+		}
+		break;
+	}
+
+	case S_GAME_START:
+	{
+		pGame->currentScene = SCENE_INGAME; 
+		printf("Game Started!\n");
+		break;
+	}
+
 	// (2) "게임 상태" 패킷 처리
 	case S_GAME_STATE:
 	{
@@ -231,6 +248,17 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	// 1. 매칭 전에는 조작 불가
 	if (pGame->myPlayerID == -1) return;
 
+	if (pGame->currentScene == SCENE_LOBBY) {
+		if (wParam == 'r' || wParam == 'R') {
+			// 준비 패킷 전송
+			C_ReqReadyPacket pkt;
+			pkt.size = sizeof(pkt);
+			pkt.type = C_REQ_READY;
+			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+		}
+		return; // 로비에서는 이동/공격 불가
+	}
+
 	//// 2. 보낼 패킷 준비
 	//C_MovePacket pkt;
 	//pkt.size = sizeof(C_MovePacket);
@@ -379,6 +407,49 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 // ---  그리기 전용 함수 ---
 void Game_Render(HDC mDC, GameState* pGame)
 {
+	// --- 로비 화면 그리기 ---
+	if (pGame->currentScene == SCENE_LOBBY)
+	{
+		TCHAR lpOut[100];
+
+		// 배경 (흰색)
+		Rectangle(mDC, 0, 0, 1200, 900);
+
+		// 제목
+		wsprintf(lpOut, L"=== GAME LOBBY ===");
+		TextOut(mDC, 500, 200, lpOut, lstrlen(lpOut));
+
+		// 플레이어 목록 표시
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			if (i < pGame->connectedCount) { // 접속한 플레이어만
+				if (pGame->playerReadyState[i]) {
+					wsprintf(lpOut, L"Player %d : [READY]", i);
+					SetTextColor(mDC, RGB(0, 200, 0)); // 초록색
+				}
+				else {
+					wsprintf(lpOut, L"Player %d : Waiting...", i);
+					SetTextColor(mDC, RGB(255, 0, 0)); // 빨간색
+				}
+			}
+			else {
+				wsprintf(lpOut, L"Player %d : (Empty)", i);
+				SetTextColor(mDC, RGB(100, 100, 100)); // 회색
+			}
+			TextOut(mDC, 500, 300 + (i * 30), lpOut, lstrlen(lpOut));
+		}
+
+		// 내 상태 표시
+		SetTextColor(mDC, RGB(0, 0, 0)); // 검은색 복귀
+		if (pGame->myPlayerID != -1) {
+			wsprintf(lpOut, L"My ID: %d (Press 'R' to Ready)", pGame->myPlayerID);
+			TextOut(mDC, 500, 500, lpOut, lstrlen(lpOut));
+		}
+		else {
+			TextOut(mDC, 500, 500, L"Connecting to Server...", 23);
+		}
+		return;
+	}
+
 	HBRUSH hBrush, oldBrush;
 	TCHAR lpOut[100];
 

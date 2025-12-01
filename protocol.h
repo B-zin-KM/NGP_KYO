@@ -54,6 +54,24 @@ struct S_GameStatePacket : public PacketHeader {
     BulletState bullets[MAX_BULLETS];
 };
 
+#define C_REQ_READY 3  
+struct C_ReqReadyPacket : public PacketHeader {
+    // 내용 없음 
+};
+
+#define S_LOBBY_UPDATE 4
+struct S_LobbyUpdatePacket : public PacketHeader {
+    int connectedCount; // 현재 접속 인원
+    struct LobbyPlayerInfo {
+        bool connected; // 접속 여부
+        bool isReady;   // 준비 완료 여부
+    } players[MAX_PLAYERS];
+};
+
+#define S_GAME_START 5
+struct S_GameStartPacket : public PacketHeader {
+    // 내용 없음 (받으면 게임 화면으로 전환)
+};
 
 // ==========================================================
 // [클라이언트 -> 서버] (번호: 10 ~ 19)
@@ -71,5 +89,5 @@ struct C_AttackPacket : public PacketHeader {
     int direction; // 1:Right, 2:Left, 3:Down, 4:Up
 };
 
-// [중요] 정렬 해제
+// 정렬 해제
 #pragma pack(pop)
