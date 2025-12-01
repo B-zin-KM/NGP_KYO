@@ -118,6 +118,7 @@ bool bulletVSplayer2(int x, int y, int x2, int y2);
 bool enemyVSboom(int x, int y, int x2, int y2, int boomsize);
 bool boardVSboom(int x, int y, int x2, int y2, int boomsize);
 bool playerVSenemy(int x, int y, int x2, int y2);
+bool CheckWallCollision(GameState* pGame, int nextX, int nextY);
 
 
 // --- 게임 로직 함수 프로토타입 ---

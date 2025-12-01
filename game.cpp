@@ -65,6 +65,19 @@ bool playerVSenemy(int x, int y, int x2, int y2) {					//주인공 vs 적 충돌체크
 		return FALSE;
 }
 
+
+bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
+{
+	for (int i = 0; i < 150; i++) {
+		if (pGame->board_easy[i].value == TRUE) continue;
+		if (playerVSboard(nextX, nextY, pGame->board_easy[i].x, pGame->board_easy[i].y)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 // --- 네트워크 패킷 처리 함수 ---
 void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 {
@@ -302,26 +315,34 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 	static float moveTimer = 0.0f;
 	moveTimer += deltaTime;
 
-	if (moveTimer >= 0.010f)
+	if (moveTimer >= 0.010f) // (아까 설정한 타이머 값)
 	{
 		moveTimer = 0.0f;
 
-		// 1. 가로 이동 (X축) 체크
+		// --- 1. 가로 이동 (X축) ---
 		int dirX = 0;
 		if (pGame->keys['D']) dirX = 1;      // 우
 		else if (pGame->keys['A']) dirX = 2; // 좌
 
 		if (dirX != 0) {
-			// (1) 로컬 이동: 패킷 보낼 때 같이 움직임! (속도 3)
-			if (dirX == 1) pGame->players[id].x += 2;
-			else pGame->players[id].x -= 2;
+			// [수정] 미리 가볼 좌표를 계산해 봅니다.
+			int nextX = pGame->players[id].x;
+			if (dirX == 1) nextX += 2;
+			else nextX -= 2;
 
-			// (2) 패킷 전송
-			C_MovePacket pkt;
-			pkt.size = sizeof(C_MovePacket);
-			pkt.type = C_MOVE;
-			pkt.direction = dirX;
-			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+			// [핵심] 가려는 곳(nextX)에 벽이 없을 때만! 이동하고 패킷을 보냅니다.
+			if (CheckWallCollision(pGame, nextX, pGame->players[id].y) == false)
+			{
+				// 1. 로컬 이동 확정
+				pGame->players[id].x = nextX;
+
+				// 2. 패킷 전송 (벽에 막혔으면 전송도 안 함 -> 서버 트래픽 절약)
+				C_MovePacket pkt;
+				pkt.size = sizeof(C_MovePacket);
+				pkt.type = C_MOVE;
+				pkt.direction = dirX;
+				pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+			}
 		}
 
 		// --- 2. 세로 이동 (Y축) ---
@@ -330,16 +351,24 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 		else if (pGame->keys['W']) dirY = 4; // 상
 
 		if (dirY != 0) {
-			// (1) 로컬 이동 (속도 3)
-			if (dirY == 3) pGame->players[id].y += 2;
-			else pGame->players[id].y -= 2;
+			// [수정] 미리 가볼 좌표 계산
+			int nextY = pGame->players[id].y;
+			if (dirY == 3) nextY += 2;
+			else nextY -= 2;
 
-			// (2) 패킷 전송
-			C_MovePacket pkt;
-			pkt.size = sizeof(C_MovePacket);
-			pkt.type = C_MOVE;
-			pkt.direction = dirY;
-			pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+			// [핵심] 벽 검사 (Y축)
+			if (CheckWallCollision(pGame, pGame->players[id].x, nextY) == false)
+			{
+				// 1. 로컬 이동 확정
+				pGame->players[id].y = nextY;
+
+				// 2. 패킷 전송
+				C_MovePacket pkt;
+				pkt.size = sizeof(C_MovePacket);
+				pkt.type = C_MOVE;
+				pkt.direction = dirY;
+				pGame->networkManager.SendPacket((char*)&pkt, sizeof(pkt));
+			}
 		}
 	}
 
