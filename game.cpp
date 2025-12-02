@@ -70,6 +70,24 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		break;
 	}
 
+	case S_EXPLOSION:
+	{
+		S_ExplosionPacket* pPkt = (S_ExplosionPacket*)pHeader;
+
+		// 빈 이펙트 슬롯을 찾아 생성
+		for (int i = 0; i < 20; ++i) {
+			if (!pGame->effects[i].active) {
+				pGame->effects[i].active = true;
+				pGame->effects[i].x = pPkt->x;
+				pGame->effects[i].y = pPkt->y;
+				pGame->effects[i].size = pPkt->size; // 초기 크기
+				pGame->effects[i].type = pPkt->type;
+				pGame->effects[i].time = 0;
+				break;
+			}
+		}
+		break;
+	}
 	// (2) "게임 상태" 패킷 처리
 	case S_GAME_STATE:
 	{
@@ -304,6 +322,17 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 	if (pGame->myPlayerID == -1) return; // 매칭 대기 중
 	int id = pGame->myPlayerID;
 
+	for (int i = 0; i < 20; ++i) {
+		if (pGame->effects[i].active) {
+			pGame->effects[i].time++;
+			pGame->effects[i].size += 2; // 크기 증가 (펑!)
+
+			// 10프레임뒤에 사라짐
+			if (pGame->effects[i].time > 10) {
+				pGame->effects[i].active = false;
+			}
+		}
+	}
 
 	// 2. 이동 및 패킷 전송 로직
 	static float moveTimer = 0.0f;
@@ -530,6 +559,20 @@ void Game_Render(HDC mDC, GameState* pGame)
 		}
 	}
 	SelectObject(mDC, oldBrush);
+
+	for (int i = 0; i < 20; ++i) {
+		if (pGame->effects[i].active) {
+			// 타입에 따라 색상 변경 (적: 빨강, 플레이어: 파랑)
+			HBRUSH effectBrush = (pGame->effects[i].type == 0) ? pGame->hBrushRed : pGame->hBrushBlack;
+
+			oldBrush = (HBRUSH)SelectObject(mDC, effectBrush);
+			int r = pGame->effects[i].size;
+			Ellipse(mDC,
+				pGame->effects[i].x - r, pGame->effects[i].y - r,
+				pGame->effects[i].x + r, pGame->effects[i].y + r);
+			SelectObject(mDC, oldBrush);
+		}
+	}
 }
 
 // --- 탄환 개수 반환 함수 ---

@@ -75,6 +75,13 @@ struct S_GameStartPacket : public PacketHeader {
     // 내용 없음 (받으면 게임 화면으로 전환)
 };
 
+#define S_EXPLOSION 6
+struct S_ExplosionPacket : public PacketHeader { 
+    int x, y;      // 폭발 위치
+    int size;      // 폭발 크기 (기본 15)
+    int type;      // 0: 적 사망, 1: 플레이어 사망 (색깔 구분용)
+};
+
 // ==========================================================
 // [클라이언트 -> 서버] (번호: 10 ~ 19)
 // ==========================================================

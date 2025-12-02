@@ -222,16 +222,16 @@ void UpdateBullets() {
                 b->active = false;               // 총알 삭제
                 g_GameRoom.enemies[j].life = false; // 적 사망
 
-                //// 폭발 패킷 전송
-                //S_ExplosionPacket expPkt;
-                //expPkt.header.size = sizeof(S_ExplosionPacket);
-                //expPkt.header.type = S_EXPLOSION; // 103번
-                //expPkt.x = (int)g_GameRoom.enemies[j].x + 15;
-                //expPkt.y = (int)g_GameRoom.enemies[j].y + 15;
-                //expPkt.size = 20;
-                //expPkt.type = 0; // 0: 적 사망
+                // 폭발 패킷 전송
+                S_ExplosionPacket expPkt;
+                expPkt.header.size = sizeof(S_ExplosionPacket);
+                expPkt.header.type = S_EXPLOSION; // 103번
+                expPkt.x = (int)g_GameRoom.enemies[j].x + 15;
+                expPkt.y = (int)g_GameRoom.enemies[j].y + 15;
+                expPkt.size = 20;
+                expPkt.type = 0; // 0: 적 사망
 
-                //BroadcastPacket((char*)&expPkt, expPkt.header.size);
+                BroadcastPacket((char*)&expPkt, expPkt.header.size);
 
                 break; // 총알 하나가 적 하나만 죽이고 사라짐
             }

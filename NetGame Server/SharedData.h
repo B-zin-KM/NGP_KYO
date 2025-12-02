@@ -87,6 +87,13 @@ typedef struct {
     PacketHeader header;
 } C_ReqReadyPacket;
 
+#define S_EXPLOSION 6
+typedef struct {
+	PacketHeader header;
+    int x, y;      // 폭발 위치
+    int size;      // 폭발 크기 (기본 15)
+    int type;      // 0: 적 사망, 1: 플레이어 사망 (색깔 구분용)
+} S_ExplosionPacket;
 // 10. 이동 요청 패킷
 #define C_MOVE 10
 typedef struct {
