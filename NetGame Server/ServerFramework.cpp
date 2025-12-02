@@ -1,17 +1,6 @@
 #include "Common.h"         
 #include "ServerFramework.h"
 
-// 머지 긴가민가해서 일단 이렇게함
-// 헤더가 없다면 여기에 선언 (GameLogic.cpp에 있는 함수들)
-extern void InitGameMap();
-extern void InitEnemies();
-extern void UpdateBullets();
-extern void UpdateEnemyAI();
-extern void ProcessPlayerMove(int playerIndex, char* data);
-extern void ProcessPlayerAttack(int playerIndex, char* data);
-extern void BroadcastPacket(char* packet, int size);
-extern bool CheckGameEndConditions();
-
 // LLD 3. GameLoop 스레드 (게임 로직 돌리는 곳)
 unsigned __stdcall GameLoopThread(void* arg)
 {

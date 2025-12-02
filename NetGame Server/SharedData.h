@@ -12,7 +12,7 @@
 #define BULLET_SIZE_W 18 
 #define BULLET_SIZE_H 8
 
-// 큐 관련 상수 (이것도 필요합니다)
+// 큐 관련 상수 
 #define MAX_PACKET_QUEUE_SIZE 200 
 #define MAX_PACKET_DATA_SIZE 2048
 
