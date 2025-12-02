@@ -271,6 +271,7 @@ void UpdateBullets() {
                 expPkt.y = (int)g_GameRoom.enemies[j].y + 15;
                 expPkt.size = 20;
                 expPkt.type = 0; // 0: Àû »ç¸Á
+                expPkt.playerID = -1;
 
                 BroadcastPacket((char*)&expPkt, expPkt.header.size);
 
