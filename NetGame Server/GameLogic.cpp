@@ -193,7 +193,7 @@ void CheckCollisions()
                 expPkt.y = (int)g_GameRoom.players[i].y + 15;
                 expPkt.size = 25; 
                 expPkt.type = 1;  
-                expPkt.playerID = j;
+                expPkt.playerID = i;
 
                 BroadcastPacket((char*)&expPkt, expPkt.header.size);
             }
