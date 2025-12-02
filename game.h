@@ -75,6 +75,7 @@ struct EFFECT {
 	int time; // 이펙트가 유지될 시간 (프레임 단위)
 	int type; // 0: 적(빨강), 1: 플레이어(초록/파랑)
 	bool active;
+	int playerID;
 };
 
 enum Scene {

@@ -82,6 +82,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 				pGame->effects[i].y = pPkt->y;
 				pGame->effects[i].size = pPkt->size; // 초기 크기
 				pGame->effects[i].type = pPkt->type;
+				pGame->effects[i].playerID = pPkt->playerID;
 				pGame->effects[i].time = 0;
 				break;
 			}
@@ -560,10 +561,24 @@ void Game_Render(HDC mDC, GameState* pGame)
 	}
 	SelectObject(mDC, oldBrush);
 
+	// 폭발 이펙트 그리기
 	for (int i = 0; i < 20; ++i) {
 		if (pGame->effects[i].active) {
-			// 타입에 따라 색상 변경 (적: 빨강, 플레이어: 파랑)
-			HBRUSH effectBrush = (pGame->effects[i].type == 0) ? pGame->hBrushRed : pGame->hBrushBlack;
+			HBRUSH effectBrush;
+
+			// [0: 적] -> 빨강
+			if (pGame->effects[i].type == 0) {
+				effectBrush = pGame->hBrushRed;
+			}
+			// [1: 플레이어] -> 내꺼면 노랑, 남꺼면 검정
+			else {
+				if (pGame->effects[i].playerID == pGame->myPlayerID) {
+					effectBrush = pGame->hBrushYellow; // 나 (노랑)
+				}
+				else {
+					effectBrush = pGame->hBrushBlack;  // 남 (검정)
+				}
+			}
 
 			oldBrush = (HBRUSH)SelectObject(mDC, effectBrush);
 			int r = pGame->effects[i].size;

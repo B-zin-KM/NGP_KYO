@@ -79,7 +79,8 @@ struct S_GameStartPacket : public PacketHeader {
 struct S_ExplosionPacket : public PacketHeader { 
     int x, y;      // 폭발 위치
     int size;      // 폭발 크기 (기본 15)
-    int type;      // 0: 적 사망, 1: 플레이어 사망 (색깔 구분용)
+    int type;      // 0: 적 사망, 1: 플레이어 사망 
+    int playerID;
 };
 
 // ==========================================================
