@@ -156,6 +156,51 @@ bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, 
     return (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2);
 }
 
+void CheckCollisions()
+{
+
+    //플레이어 vs 적 충돌 검사
+    for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i) {
+        // 접속 안 했거나 이미 죽은 플레이어는 무시
+        if (!g_GameRoom.players[i].isConnected || !g_GameRoom.players[i].life) continue;
+
+        // (옵션) 무적 상태라면 충돌 안 함
+        // if (g_GameRoom.players[i].moojuk) continue;
+
+        for (int j = 0; j < MAX_ENEMIES; ++j) {
+            if (!g_GameRoom.enemies[j].life) continue;
+
+            // 충돌 판정 (플레이어 크기 vs 적 크기)
+            // (둘 다 PLAYER_SIZE=30 이라고 가정)
+            if (CheckRectCollision(
+                (int)g_GameRoom.players[i].x, (int)g_GameRoom.players[i].y, PLAYER_SIZE, PLAYER_SIZE,
+                (int)g_GameRoom.enemies[j].x, (int)g_GameRoom.enemies[j].y, PLAYER_SIZE, PLAYER_SIZE))
+            {
+                // --- 충돌 발생! ---
+                printf("[Crash] Player %d touched Enemy %d -> DIE\n", i, j);
+
+                // 1. 플레이어 사망 처리
+                g_GameRoom.players[i].life = false;
+
+                // (선택 사항) 적도 같이 죽일지? -> 일단 플레이어만 죽게 둠
+                // g_GameRoom.enemies[j].life = false; 
+
+                // 2. 폭발 이펙트 전송 (플레이어 위치)
+                S_ExplosionPacket expPkt;
+                expPkt.header.size = sizeof(S_ExplosionPacket);
+                expPkt.header.type = S_EXPLOSION; 
+                expPkt.x = (int)g_GameRoom.players[i].x + 15; // 중심점
+                expPkt.y = (int)g_GameRoom.players[i].y + 15;
+                expPkt.size = 25; 
+                expPkt.type = 1;  
+                expPkt.playerID = j;
+
+                BroadcastPacket((char*)&expPkt, expPkt.header.size);
+            }
+        }
+    }
+}
+
 bool CheckGameEndConditions() {
     return false;
 }
@@ -201,6 +246,36 @@ void UpdateBullets() {
                 printf("벽vs총알 충돌! \n");
                 g_Board[k].value = true;
                 break;
+            }
+        }
+
+        for (int j = 0; j < MAX_ENEMIES; ++j) {
+            if (g_GameRoom.enemies[j].life == false) continue; // 죽은 적은 패스
+
+            // 적 크기는 PLAYER_SIZE (30)
+            if (CheckRectCollision((int)b->x, (int)b->y, bW, bH,
+                (int)g_GameRoom.enemies[j].x, (int)g_GameRoom.enemies[j].y, PLAYER_SIZE, PLAYER_SIZE))
+            {
+                // 충돌 발생!
+                printf("[Hit] Enemy %d killed by Bullet %d\n", j, i);
+
+                // 상태 변경
+                b->active = false;               // 총알 삭제
+                g_GameRoom.enemies[j].life = false; // 적 사망
+
+                // 폭발 패킷 전송
+                S_ExplosionPacket expPkt;
+                expPkt.header.size = sizeof(S_ExplosionPacket);
+                expPkt.header.type = S_EXPLOSION; // 103번
+                expPkt.x = (int)g_GameRoom.enemies[j].x + 15;
+                expPkt.y = (int)g_GameRoom.enemies[j].y + 15;
+                expPkt.size = 20;
+                expPkt.type = 0; // 0: 적 사망
+                expPkt.playerID = -1;
+
+                BroadcastPacket((char*)&expPkt, expPkt.header.size);
+
+                break; // 총알 하나가 적 하나만 죽이고 사라짐
             }
         }
     }
