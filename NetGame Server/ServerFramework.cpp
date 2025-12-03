@@ -10,8 +10,8 @@ unsigned __stdcall GameLoopThread(void* arg)
     {
         EnterCriticalSection(&g_GameRoom.lock);
         {
-            UpdateBullets(); // ¹üÁø´Ô ±â´É (ÃÑ¾Ë+º®ÆÄ±«)
-            UpdateEnemyAI(); // Àû ÀÌµ¿
+            UpdateBullets();
+            UpdateEnemyAI();
             CheckCollisions(); 
         }
         LeaveCriticalSection(&g_GameRoom.lock);

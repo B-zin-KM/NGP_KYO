@@ -6,7 +6,9 @@
 #define BULLET_SPEED 15 // 총알 속도
 #define MAX_AMMO 100 // 일단 총알 개수
 
-#define BOARD_SIZE 35
+#define MAX_BOARD_x 20   // 보드칸 가로 개수
+#define MAX_BOARD_y 15   // 보드칸 세로 개수
+#define BOARD_SIZE 35    // 보드칸 크기
 #define PLAYER_SIZE 30
 #define BULLET_LEN 18   // bulletlen
 #define BULLET_THICK 8  // bulletthick
@@ -14,13 +16,13 @@
 #define GAME_LIMIT_SEC 120
 
 
-SERVER_BOARD g_Board[150];
+SERVER_BOARD g_Board[MAX_BOARD];
 void InitGameMap() {
 
     int boardnum = 0;
     // 1. 전체 맵 생성
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 15; j++) {
+    for (int i = 0; i < MAX_BOARD_y; i++) {
+        for (int j = 0; j < MAX_BOARD_x; j++) {
             g_Board[boardnum].x = j * BOARD_SIZE + 335;
             g_Board[boardnum].y = i * BOARD_SIZE + 240;
             g_Board[boardnum].value = false;
@@ -216,12 +218,12 @@ bool CheckGameEndConditions() {
 }
 
 void UpdateBullets() {
-    // 보드 크기 (game.h 참고: 15칸 * 35픽셀 = 525 + 여백)
-    // 일단 간단하게 화면 밖으로 나가면 삭제
-    const int MAP_MIN_X = 0;
-    const int MAP_MAX_X = 900;
-    const int MAP_MIN_Y = 0;
-    const int MAP_MAX_Y = 800;
+
+    // 맵 경계 설정
+    const int MAP_LEFT = 335;
+    const int MAP_TOP = 240;
+    const int MAP_RIGHT = 335 + (MAX_BOARD_x * BOARD_SIZE);  // 20칸 * 35픽셀
+    const int MAP_BOTTOM = 240 + (MAX_BOARD_y * BOARD_SIZE); // 15칸 * 35픽셀
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -237,8 +239,8 @@ void UpdateBullets() {
         }
 
         // (2) 맵 밖으로 나가면 삭제
-        if (b->x < MAP_MIN_X || b->x > MAP_MAX_X ||
-            b->y < MAP_MIN_Y || b->y > MAP_MAX_Y) {
+        if (b->x < MAP_LEFT || b->x > MAP_RIGHT ||
+            b->y < MAP_TOP || b->y > MAP_BOTTOM) {
             b->active = false;
         }
 
@@ -246,7 +248,7 @@ void UpdateBullets() {
         int bW = (b->direct == 1 || b->direct == 2) ? BULLET_SIZE_W : BULLET_SIZE_H;
         int bH = (b->direct == 1 || b->direct == 2) ? BULLET_SIZE_H : BULLET_SIZE_W;
 
-        for (int k = 0; k < 150; k++) {
+        for (int k = 0; k < MAX_BOARD; k++) {
 
             if (g_Board[k].value == true) continue;
 
@@ -353,7 +355,7 @@ void BroadcastPacket(char* packet, int size)
             statePkt.enemies[i] = g_GameRoom.enemies[i];
         }
 
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < MAX_BOARD; i++) {
             statePkt.board[i] = g_Board[i].value;
         }
 

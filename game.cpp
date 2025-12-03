@@ -13,16 +13,22 @@ bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 	// 보드판 가장자리 충돌검사
 	const int MAP_LEFT = 335;
 	const int MAP_TOP = 240;
-	const int MAP_RIGHT = 335 + (15 * 35);
-	const int MAP_BOTTOM = 240 + (10 * 35);
+
+	// [수정됨] 가로 20칸 x 타일크기 35
+	const int MAP_RIGHT = 335 + (BOARDSIZE_x * boardsize);
+
+	// [수정됨] 세로 15칸 x 타일크기 35
+	const int MAP_BOTTOM = 240 + (BOARDSIZE_y * boardsize);
 
 	if (nextX < MAP_LEFT) return true;
 	if (nextY < MAP_TOP) return true;
+
+	// 플레이어 크기(playersize)를 고려하여 우측/하단 경계 체크
 	if (nextX > MAP_RIGHT - playersize) return true;
-	if (nextY > MAP_BOTTOM - playersize) return true;	
+	if (nextY > MAP_BOTTOM - playersize) return true;
 
 	// 검은타일과 충돌검사
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		if (pGame->board_easy[i].value == TRUE) continue;
 		if (CheckRectCollision(nextX, nextY, playersize, playersize,
 			pGame->board_easy[i].x, pGame->board_easy[i].y, boardsize, boardsize))
@@ -172,7 +178,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		}
 
 		// 3. 보드판 갱신
-		for (int i = 0; i < 150; i++) {
+		for (int i = 0; i < BOARD_SIZE; i++) {
 			pGame->board_easy[i].value = pPkt->board[i];
 		}
 
@@ -206,13 +212,14 @@ void Game_Init(HWND hWnd, GameState* pGame)
 
 	// 보드 생성 (일단 로컬에서 초기화, 나중에 서버 동기화 필요)
 	pGame->boardnum = 0;
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 15; j++) {
+	for (int i = 0; i < BOARDSIZE_y; i++) {
+		for (int j = 0; j < BOARDSIZE_x; j++) {
 			pGame->board_easy[pGame->boardnum].x = j * boardsize + 335;
 			pGame->board_easy[pGame->boardnum].y = i * boardsize + 240;
 			pGame->boardnum++;
 		}
 	}
+	// 초기 하얀타일 설정
 	for (int j = 3; j < 7; j++) {
 		for (int k = 5; k < 10; k++) {
 			pGame->board_easy[j * 15 + k].value = TRUE;
@@ -453,7 +460,7 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 
 
 	// 4. 보드 색상 갱신 (서버에서 벽이 뚫리면 여기서 색이 바뀜)
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		if (pGame->board_easy[i].value) pGame->board_easy[i].color = 255; // 흰색 (이동 가능)
 		else pGame->board_easy[i].color = 30;  // 검은색 (벽)
 	}
@@ -509,7 +516,7 @@ void Game_Render(HDC mDC, GameState* pGame)
 	TCHAR lpOut[100];
 
 	// 1. 보드 그리기
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		hBrush = (pGame->board_easy[i].value) ? pGame->hBrushWhite : pGame->hBrushGray;
 		oldBrush = (HBRUSH)SelectObject(mDC, hBrush);
 		Rectangle(mDC, pGame->board_easy[i].x, pGame->board_easy[i].y, pGame->board_easy[i].x + boardsize, pGame->board_easy[i].y + boardsize);

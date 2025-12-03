@@ -10,7 +10,9 @@
 #include <math.h>
 
 
-#define boardsize 35
+#define boardsize 35	// 보드한칸 크기
+#define BOARDSIZE_x 20	// 보드칸 가로개수
+#define BOARDSIZE_y 15	// 보드칸 세로개수
 #define playersize 30
 #define bulletlen 18
 #define bulletthick 8
@@ -93,7 +95,7 @@ struct GameState {
 	PLAYER players[MAX_PLAYERS]; // 나를 포함한 모든 플레이어
 	ENEMY enemies[MAX_ENEMIES];   
 
-	BOARD board_easy[150]; // (보드도 나중에 동기화 필요)
+	BOARD board_easy[BOARDSIZE_x * BOARDSIZE_y]; // (보드도 나중에 동기화 필요)
 	BULLET bullet[6];       // (총알도 나중에 동기화 필요)
 	READYBULLET readybullet[6];
 

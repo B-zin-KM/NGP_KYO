@@ -16,7 +16,7 @@ void InitGameMap();
 void InitEnemies();
 void UpdateBullets();
 bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);
-void  CheckCollisions();
+void CheckCollisions();
 bool CheckGameEndConditions();
 void BroadcastPacket(char* packet, int size);
 void ProcessPacket(Packet* pkt);

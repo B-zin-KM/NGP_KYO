@@ -4,6 +4,8 @@
 #define MAX_ENEMIES 10
 #define MAX_BULLETS 50
 #define ENEMY_SPEED 1
+#define BOARD_SIZE 300 // 20X15
+
 // 1바이트 정렬 시작
 #pragma pack(push, 1)
 
@@ -54,7 +56,7 @@ struct S_GameStatePacket : public PacketHeader {
     // 총알 정보 (MAX 50)
     BulletState bullets[MAX_BULLETS];
     // 보드 정보
-    bool board[150];
+    bool board[BOARD_SIZE];
 
     int remainingTime;
 };
