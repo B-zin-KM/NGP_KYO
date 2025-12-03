@@ -175,6 +175,8 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			pGame->board_easy[i].value = pPkt->board[i];
 		}
 
+		pGame->timeLeft = pPkt->remainingTime;
+
 		break;
 	}
 
@@ -588,6 +590,22 @@ void Game_Render(HDC mDC, GameState* pGame)
 			SelectObject(mDC, oldBrush);
 		}
 	}
+
+	// 타이머 그리기
+	int oldBkMode = SetBkMode(mDC, TRANSPARENT);
+	COLORREF oldTextColor = SetTextColor(mDC, RGB(255, 255, 255));
+
+	TCHAR timeText[64];
+	wsprintf(timeText, L"TIME: %d", pGame->timeLeft);
+
+	TextOut(mDC, 350, 10, timeText, lstrlen(timeText));
+
+	if (pGame->timeLeft <= 0) {
+		TCHAR overText[] = L"GAME OVER";
+		TextOut(mDC, 380, 300, overText, lstrlen(overText));
+	}
+	SetBkMode(mDC, oldBkMode);
+	SetTextColor(mDC, oldTextColor);
 }
 
 // --- 탄환 개수 반환 함수 ---

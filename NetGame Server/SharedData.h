@@ -18,6 +18,8 @@
 
 #define MAX_BULLETS 50 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
 
+#define GAME_DURATION_SEC 120 // 게임시간 120초 설정
+
 // 클라와 통일하기 위해 1바이트 정렬
 #pragma pack(push, 1)
 
@@ -64,6 +66,8 @@ typedef struct {
     BulletState bullets[MAX_BULLETS];
 
     bool board[150];
+
+    int remainingTime;
 
 } S_GameStatePacket;
 
@@ -164,6 +168,8 @@ typedef struct {
     EnemyState enemies[MAX_ENEMIES];
 
     bool board[150];
+
+    time_t gameStartTime;
 
 } GameRoom;
 

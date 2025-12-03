@@ -11,6 +11,8 @@
 #define BULLET_LEN 18   // bulletlen
 #define BULLET_THICK 8  // bulletthick
 
+#define GAME_LIMIT_SEC 120
+
 
 SERVER_BOARD g_Board[150];
 void InitGameMap() {
@@ -202,6 +204,15 @@ void CheckCollisions()
 }
 
 bool CheckGameEndConditions() {
+    time_t currentTime = time(NULL);
+    int elapsed = (int)(currentTime - g_GameRoom.gameStartTime);
+
+    // 시간이 다 됐으면 true 반환 -> 서버 스레드 종료
+    if (elapsed >= GAME_LIMIT_SEC) {
+        printf("[SERVER] Time Over! (120s passed)\n");
+        return true;
+    }
+
     return false;
 }
 
@@ -261,14 +272,24 @@ void UpdateBullets() {
 
                 // 상태 변경
                 b->active = false;               // 총알 삭제
-                g_GameRoom.enemies[j].life = false; // 적 사망
+                // g_GameRoom.enemies[j].life = false; // 리스폰으로 할거니까 잠시 
+                int deadX = (int)g_GameRoom.enemies[j].x;
+                int deadY = (int)g_GameRoom.enemies[j].y; // 죽은위치를 백업 
+
+
+                g_GameRoom.enemies[j].x = rand() % 800 + 50;
+                g_GameRoom.enemies[j].y = rand() % 700 + 50;
+
+                g_GameRoom.enemies[j].life = true;
+
+                printf("[Respawn] Enemy %d moved to (%d, %d)\n", j, g_GameRoom.enemies[j].x, g_GameRoom.enemies[j].y);
 
                 // 폭발 패킷 전송
                 S_ExplosionPacket expPkt;
                 expPkt.header.size = sizeof(S_ExplosionPacket);
                 expPkt.header.type = S_EXPLOSION; // 103번
-                expPkt.x = (int)g_GameRoom.enemies[j].x + 15;
-                expPkt.y = (int)g_GameRoom.enemies[j].y + 15;
+                expPkt.x = deadX+ 15;
+                expPkt.y = deadY + 15;
                 expPkt.size = 20;
                 expPkt.type = 0; // 0: 적 사망
                 expPkt.playerID = -1;
@@ -309,6 +330,13 @@ void BroadcastPacket(char* packet, int size)
             statePkt.players[i].life = true; // 일단 다 살았다고 가정
 
         }
+        time_t currentTime = time(NULL);
+        int elapsed = (int)(currentTime - g_GameRoom.gameStartTime);
+        int timeLeft = GAME_LIMIT_SEC - elapsed;
+
+        if (timeLeft < 0) timeLeft = 0;
+        statePkt.remainingTime = timeLeft;
+
         LeaveCriticalSection(&g_GameRoom.lock);
 
         for (int i = 0; i < MAX_BULLETS; i++) {

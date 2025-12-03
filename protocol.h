@@ -54,6 +54,8 @@ struct S_GameStatePacket : public PacketHeader {
     BulletState bullets[MAX_BULLETS];
     // 보드 정보
     bool board[150];
+
+    int remainingTime;
 };
 
 #define C_REQ_READY 3  
