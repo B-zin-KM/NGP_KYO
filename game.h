@@ -38,7 +38,8 @@ struct PLAYER {
 	int diesize = 15;
 	bool life = TRUE;
 	bool moojuk = FALSE;
-	int ammo;		// ÃÑ¾Ë
+	int ammo;		
+	int score;
 };
 
 struct BULLET {

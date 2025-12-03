@@ -50,6 +50,7 @@ typedef struct {
     int x, y;
     int direct;
     int ammo;
+	int score;
 } PlayerState;
 
 typedef struct {
@@ -153,6 +154,8 @@ typedef struct {
     int direct;
     bool life;
     int ammo;
+
+    int score;
 
 	bool isReady; // 로비 준비 상태
 } Player;

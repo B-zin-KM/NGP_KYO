@@ -30,6 +30,7 @@ struct PlayerState {
     int x, y;
     int direct; // 방향
     int ammo;   // 총알 개수
+    int score;
 };
 
 struct EnemyState {

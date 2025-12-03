@@ -115,6 +115,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			pGame->players[i].direct = pPkt->players[i].direct;
 			pGame->players[i].life = isAlive;
 			pGame->players[i].ammo = pPkt->players[i].ammo;
+			pGame->players[i].score = pPkt->players[i].score;
 
 			// 좌표 정보
 			int serverX = pPkt->players[i].x;
@@ -597,6 +598,32 @@ void Game_Render(HDC mDC, GameState* pGame)
 		}
 	}
 
+	// 점수판 UI 그리기
+	{
+		TCHAR uiBuf[100];
+		SetBkMode(mDC, TRANSPARENT); // 텍스트 배경을 투명하게 설정
+
+		// 위치 설정 (창 가로 크기가 1200이므로 오른쪽 끝인 1000 지점)
+		int startX = 1000;
+		int startY = 30;
+
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			// 점수 텍스트 준비
+			if (i == pGame->myPlayerID) {
+				// 내 점수는 파란색으로 표시하고 (ME) 붙이기
+				SetTextColor(mDC, RGB(0, 0, 255));
+				wsprintf(uiBuf, L"[P%d] Score : %d (ME)", i, pGame->players[i].score);
+			}
+			else {
+				// 다른 플레이어는 검은색
+				SetTextColor(mDC, RGB(0, 0, 0));
+				wsprintf(uiBuf, L"[P%d] Score : %d", i, pGame->players[i].score);
+			}
+
+			// 텍스트 출력 (한 줄씩 띄워서)
+			TextOut(mDC, startX, startY + (i * 25), uiBuf, lstrlen(uiBuf));
+		}	
+	}
 	// 타이머 그리기
 	int oldBkMode = SetBkMode(mDC, TRANSPARENT);
 	COLORREF oldTextColor = SetTextColor(mDC, RGB(255, 255, 255));

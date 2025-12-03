@@ -183,9 +183,8 @@ void CheckCollisions()
 
                 // 1. 플레이어 사망 처리
                 g_GameRoom.players[i].life = false;
-
-                // (선택 사항) 적도 같이 죽일지? -> 일단 플레이어만 죽게 둠
-                // g_GameRoom.enemies[j].life = false; 
+                g_GameRoom.players[i].score -= 100;
+                //g_GameRoom.players[i].deadTime = GetTickCount();
 
                 // 2. 폭발 이펙트 전송 (플레이어 위치)
                 S_ExplosionPacket expPkt;
@@ -276,6 +275,12 @@ void UpdateBullets() {
                 int deadX = (int)g_GameRoom.enemies[j].x;
                 int deadY = (int)g_GameRoom.enemies[j].y; // 죽은위치를 백업 
 
+				// 점수 추가
+                int owner = b->ownerID;
+                if (owner >= 0 && owner < MAX_PLAYERS_PER_ROOM) {
+                    g_GameRoom.players[owner].score += 500;
+                    printf("[Score] P%d Score: %d\n", owner, g_GameRoom.players[owner].score);
+                }
 
                 g_GameRoom.enemies[j].x = rand() % 800 + 50;
                 g_GameRoom.enemies[j].y = rand() % 700 + 50;
@@ -328,6 +333,7 @@ void BroadcastPacket(char* packet, int size)
             statePkt.players[i].y = g_GameRoom.players[i].y;
             statePkt.players[i].direct = g_GameRoom.players[i].direct;
             statePkt.players[i].life = true; // 일단 다 살았다고 가정
+            statePkt.players[i].score = g_GameRoom.players[i].score;
 
         }
         time_t currentTime = time(NULL);
