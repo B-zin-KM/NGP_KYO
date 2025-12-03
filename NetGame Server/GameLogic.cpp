@@ -6,8 +6,8 @@
 #define BULLET_SPEED 15 // 총알 속도
 #define MAX_AMMO 100 // 일단 총알 개수
 
-#define MAX_BOARD_x 20   // 보드칸 가로 개수
-#define MAX_BOARD_y 15   // 보드칸 세로 개수
+#define MAX_BOARD_x 32   // 보드칸 가로 개수
+#define MAX_BOARD_y 22   // 보드칸 세로 개수
 #define BOARD_SIZE 35    // 보드칸 크기
 #define PLAYER_SIZE 30
 #define BULLET_LEN 18   // bulletlen
@@ -23,20 +23,37 @@ void InitGameMap() {
     // 1. 전체 맵 생성
     for (int i = 0; i < MAX_BOARD_y; i++) {
         for (int j = 0; j < MAX_BOARD_x; j++) {
-            g_Board[boardnum].x = j * BOARD_SIZE + 335;
-            g_Board[boardnum].y = i * BOARD_SIZE + 240;
+            g_Board[boardnum].x = j * BOARD_SIZE + 135;
+            g_Board[boardnum].y = i * BOARD_SIZE + 140;
             g_Board[boardnum].value = false;
             boardnum++;
         }
     }
 
-    // 2. 초기 이동 가능 구역 설정 (하얀색)
-    // (클라의 j, k 루프와 동일)
-    for (int j = 3; j < 7; j++) {
-        for (int k = 5; k < 10; k++) {
-            g_Board[j * 15 + k].value = true;
+    // --- 2. 초기 하얀타일 설정 (3군데: 좌상단, 우상단, 우하단) ---
+
+    int width = MAX_BOARD_x;
+    int height = MAX_BOARD_y;
+
+    // 1. 좌상단 (Top-Left) 3x3
+    for (int y = 0; y < 3; y++) {
+        for (int x = 0; x < 3; x++) {
+            g_Board[y * width + x].value = true;
         }
     }
+    // 2. 우상단 (Top-Right) 3x3
+    for (int y = 0; y < 3; y++) {
+        for (int x = width - 3; x < width; x++) {
+            g_Board[y * width + x].value = true;
+        }
+    }
+    // 3. 우하단 (Bottom-Right) 3x3
+    for (int y = height - 3; y < height; y++) {
+        for (int x = width - 3; x < width; x++) {
+            g_Board[y * width + x].value = true;
+        }
+    }
+
     printf("[Server Debug] 맵 생성 완료!\n");
 }
 
@@ -105,9 +122,9 @@ void InitEnemies() {
     {
         g_GameRoom.enemies[i].life = true;
 
-        // 맵 크기(0~900, 0~800) 안에서 랜덤 위치
-        g_GameRoom.enemies[i].x = rand() % 800 + 50;
-        g_GameRoom.enemies[i].y = rand() % 700 + 50;
+        // 맵 크기(0~1400, 0~1000) 안에서 랜덤 위치
+        g_GameRoom.enemies[i].x = rand() % 1300 + 50;
+        g_GameRoom.enemies[i].y = rand() % 900 + 50;
 
         g_GameRoom.enemies[i].direct = 0;
     }
@@ -220,10 +237,10 @@ bool CheckGameEndConditions() {
 void UpdateBullets() {
 
     // 맵 경계 설정
-    const int MAP_LEFT = 335;
-    const int MAP_TOP = 240;
-    const int MAP_RIGHT = 335 + (MAX_BOARD_x * BOARD_SIZE);  // 20칸 * 35픽셀
-    const int MAP_BOTTOM = 240 + (MAX_BOARD_y * BOARD_SIZE); // 15칸 * 35픽셀
+    const int MAP_LEFT = 135;
+    const int MAP_TOP = 140;
+    const int MAP_RIGHT = MAP_LEFT + (MAX_BOARD_x * BOARD_SIZE);
+    const int MAP_BOTTOM = MAP_TOP + (MAX_BOARD_y * BOARD_SIZE);
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -284,8 +301,8 @@ void UpdateBullets() {
                     printf("[Score] P%d Score: %d\n", owner, g_GameRoom.players[owner].score);
                 }
 
-                g_GameRoom.enemies[j].x = rand() % 800 + 50;
-                g_GameRoom.enemies[j].y = rand() % 700 + 50;
+                g_GameRoom.enemies[j].x = rand() % 1300 + 50;
+                g_GameRoom.enemies[j].y = rand() % 900 + 50;
 
                 g_GameRoom.enemies[j].life = true;
 
