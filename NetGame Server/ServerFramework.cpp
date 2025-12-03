@@ -12,7 +12,7 @@ unsigned __stdcall GameLoopThread(void* arg)
         {
             UpdateBullets(); // 범진님 기능 (총알+벽파괴)
             UpdateEnemyAI(); // 적 이동
-            // CheckCollisions(); // 필요시 추가
+            CheckCollisions(); 
         }
         LeaveCriticalSection(&g_GameRoom.lock);
 
