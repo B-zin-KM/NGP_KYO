@@ -19,7 +19,7 @@ bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 	if (nextX < MAP_LEFT) return true;
 	if (nextY < MAP_TOP) return true;
 	if (nextX > MAP_RIGHT - playersize) return true;
-	if (nextY > MAP_BOTTOM - playersize) return true;
+	if (nextY > MAP_BOTTOM - playersize) return true;	
 
 	// 검은타일과 충돌검사
 	for (int i = 0; i < 150; i++) {
