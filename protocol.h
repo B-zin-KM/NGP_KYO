@@ -2,7 +2,7 @@
 
 #define MAX_PLAYERS 3
 #define MAX_ENEMIES 10
-#define MAX_BULLETS 50
+#define MAX_BULLETS 150
 #define ENEMY_SPEED 1
 #define BOARD_SIZE 300 // 20X15
 
@@ -54,7 +54,8 @@ struct S_GameStatePacket : public PacketHeader {
     // 적 10마리의 정보
     EnemyState enemies[MAX_ENEMIES];
     // 총알 정보 (MAX 50)
-    BulletState bullets[MAX_BULLETS];
+    BulletState bullets[
+        S];
     // 보드 정보
     bool board[BOARD_SIZE];
 
