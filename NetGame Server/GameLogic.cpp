@@ -11,6 +11,8 @@
 #define BULLET_LEN 18   // bulletlen
 #define BULLET_THICK 8  // bulletthick
 
+#define GAME_LIMIT_SEC 120
+
 
 SERVER_BOARD g_Board[150];
 void InitGameMap() {
@@ -156,7 +158,61 @@ bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, 
     return (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2);
 }
 
+void CheckCollisions()
+{
+
+    //플레이어 vs 적 충돌 검사
+    for (int i = 0; i < MAX_PLAYERS_PER_ROOM; ++i) {
+        // 접속 안 했거나 이미 죽은 플레이어는 무시
+        if (!g_GameRoom.players[i].isConnected || !g_GameRoom.players[i].life) continue;
+
+        // (옵션) 무적 상태라면 충돌 안 함
+        // if (g_GameRoom.players[i].moojuk) continue;
+
+        for (int j = 0; j < MAX_ENEMIES; ++j) {
+            if (!g_GameRoom.enemies[j].life) continue;
+
+            // 충돌 판정 (플레이어 크기 vs 적 크기)
+            // (둘 다 PLAYER_SIZE=30 이라고 가정)
+            if (CheckRectCollision(
+                (int)g_GameRoom.players[i].x, (int)g_GameRoom.players[i].y, PLAYER_SIZE, PLAYER_SIZE,
+                (int)g_GameRoom.enemies[j].x, (int)g_GameRoom.enemies[j].y, PLAYER_SIZE, PLAYER_SIZE))
+            {
+                // --- 충돌 발생! ---
+                printf("[Crash] Player %d touched Enemy %d -> DIE\n", i, j);
+
+                // 1. 플레이어 사망 처리
+                g_GameRoom.players[i].life = false;
+
+                // (선택 사항) 적도 같이 죽일지? -> 일단 플레이어만 죽게 둠
+                // g_GameRoom.enemies[j].life = false; 
+
+                // 2. 폭발 이펙트 전송 (플레이어 위치)
+                S_ExplosionPacket expPkt;
+                expPkt.header.size = sizeof(S_ExplosionPacket);
+                expPkt.header.type = S_EXPLOSION; 
+                expPkt.x = (int)g_GameRoom.players[i].x + 15; // 중심점
+                expPkt.y = (int)g_GameRoom.players[i].y + 15;
+                expPkt.size = 25; 
+                expPkt.type = 1;  
+                expPkt.playerID = i;
+
+                BroadcastPacket((char*)&expPkt, expPkt.header.size);
+            }
+        }
+    }
+}
+
 bool CheckGameEndConditions() {
+    time_t currentTime = time(NULL);
+    int elapsed = (int)(currentTime - g_GameRoom.gameStartTime);
+
+    // 시간이 다 됐으면 true 반환 -> 서버 스레드 종료
+    if (elapsed >= GAME_LIMIT_SEC) {
+        printf("[SERVER] Time Over! (120s passed)\n");
+        return true;
+    }
+
     return false;
 }
 
@@ -203,6 +259,46 @@ void UpdateBullets() {
                 break;
             }
         }
+
+        for (int j = 0; j < MAX_ENEMIES; ++j) {
+            if (g_GameRoom.enemies[j].life == false) continue; // 죽은 적은 패스
+
+            // 적 크기는 PLAYER_SIZE (30)
+            if (CheckRectCollision((int)b->x, (int)b->y, bW, bH,
+                (int)g_GameRoom.enemies[j].x, (int)g_GameRoom.enemies[j].y, PLAYER_SIZE, PLAYER_SIZE))
+            {
+                // 충돌 발생!
+                printf("[Hit] Enemy %d killed by Bullet %d\n", j, i);
+
+                // 상태 변경
+                b->active = false;               // 총알 삭제
+                // g_GameRoom.enemies[j].life = false; // 리스폰으로 할거니까 잠시 
+                int deadX = (int)g_GameRoom.enemies[j].x;
+                int deadY = (int)g_GameRoom.enemies[j].y; // 죽은위치를 백업 
+
+
+                g_GameRoom.enemies[j].x = rand() % 800 + 50;
+                g_GameRoom.enemies[j].y = rand() % 700 + 50;
+
+                g_GameRoom.enemies[j].life = true;
+
+                printf("[Respawn] Enemy %d moved to (%d, %d)\n", j, g_GameRoom.enemies[j].x, g_GameRoom.enemies[j].y);
+
+                // 폭발 패킷 전송
+                S_ExplosionPacket expPkt;
+                expPkt.header.size = sizeof(S_ExplosionPacket);
+                expPkt.header.type = S_EXPLOSION; // 103번
+                expPkt.x = deadX+ 15;
+                expPkt.y = deadY + 15;
+                expPkt.size = 20;
+                expPkt.type = 0; // 0: 적 사망
+                expPkt.playerID = -1;
+
+                BroadcastPacket((char*)&expPkt, expPkt.header.size);
+
+                break; // 총알 하나가 적 하나만 죽이고 사라짐
+            }
+        }
     }
 }
 
@@ -234,6 +330,13 @@ void BroadcastPacket(char* packet, int size)
             statePkt.players[i].life = true; // 일단 다 살았다고 가정
 
         }
+        time_t currentTime = time(NULL);
+        int elapsed = (int)(currentTime - g_GameRoom.gameStartTime);
+        int timeLeft = GAME_LIMIT_SEC - elapsed;
+
+        if (timeLeft < 0) timeLeft = 0;
+        statePkt.remainingTime = timeLeft;
+
         LeaveCriticalSection(&g_GameRoom.lock);
 
         for (int i = 0; i < MAX_BULLETS; i++) {

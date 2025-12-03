@@ -12,11 +12,13 @@
 #define BULLET_SIZE_W 18 
 #define BULLET_SIZE_H 8
 
-// 큐 관련 상수 (이것도 필요합니다)
+// 큐 관련 상수 
 #define MAX_PACKET_QUEUE_SIZE 200 
 #define MAX_PACKET_DATA_SIZE 2048
 
 #define MAX_BULLETS 50 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
+
+#define GAME_DURATION_SEC 120 // 게임시간 120초 설정
 
 // 클라와 통일하기 위해 1바이트 정렬
 #pragma pack(push, 1)
@@ -65,6 +67,8 @@ typedef struct {
 
     bool board[150];
 
+    int remainingTime;
+
 } S_GameStatePacket;
 
 #define S_LOBBY_UPDATE 4
@@ -86,6 +90,15 @@ typedef struct {
 typedef struct {
     PacketHeader header;
 } C_ReqReadyPacket;
+
+#define S_EXPLOSION 6
+typedef struct {
+	PacketHeader header;
+    int x, y;      // 폭발 위치
+    int size;      // 폭발 크기 (기본 15)
+    int type;      // 0: 적 사망, 1: 플레이어 사망 
+    int playerID;
+} S_ExplosionPacket;
 
 // 10. 이동 요청 패킷
 #define C_MOVE 10
@@ -155,6 +168,8 @@ typedef struct {
     EnemyState enemies[MAX_ENEMIES];
 
     bool board[150];
+
+    time_t gameStartTime;
 
 } GameRoom;
 

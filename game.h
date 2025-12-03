@@ -69,6 +69,15 @@ struct ENEMY {
 	bool boom = FALSE;
 };
 
+struct EFFECT {
+	int x, y;
+	int size;
+	int time; // 이펙트가 유지될 시간 (프레임 단위)
+	int type; // 0: 적(빨강), 1: 플레이어(초록/파랑)
+	bool active;
+	int playerID;
+};
+
 enum Scene {
 	SCENE_LOBBY,
 	SCENE_INGAME
@@ -77,6 +86,9 @@ enum Scene {
 struct GameState {
 
 	int myPlayerID = -1; // 서버가 알려줄 내 ID (0, 1, 2)
+
+	int timeLeft = 120;
+
 	PLAYER players[MAX_PLAYERS]; // 나를 포함한 모든 플레이어
 	ENEMY enemies[MAX_ENEMIES];   
 
@@ -106,8 +118,9 @@ struct GameState {
 	// 로비	관련 변수
 	bool playerReadyState[MAX_PLAYERS] = { false }; // 각 플레이어의 준비 상태
 	bool playerConnected[MAX_PLAYERS] = { false };
-
 	int connectedCount = 0;
+
+	EFFECT effects[20];
 
 	// (GDI 리소스)
 	HBRUSH hBrushBlack;

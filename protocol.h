@@ -54,6 +54,8 @@ struct S_GameStatePacket : public PacketHeader {
     BulletState bullets[MAX_BULLETS];
     // 보드 정보
     bool board[150];
+
+    int remainingTime;
 };
 
 #define C_REQ_READY 3  
@@ -73,6 +75,14 @@ struct S_LobbyUpdatePacket : public PacketHeader {
 #define S_GAME_START 5
 struct S_GameStartPacket : public PacketHeader {
     // 내용 없음 (받으면 게임 화면으로 전환)
+};
+
+#define S_EXPLOSION 6
+struct S_ExplosionPacket : public PacketHeader { 
+    int x, y;      // 폭발 위치
+    int size;      // 폭발 크기 (기본 15)
+    int type;      // 0: 적 사망, 1: 플레이어 사망 
+    int playerID;
 };
 
 // ==========================================================

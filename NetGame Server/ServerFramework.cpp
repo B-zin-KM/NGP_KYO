@@ -1,17 +1,6 @@
 #include "Common.h"         
 #include "ServerFramework.h"
 
-// 머지 긴가민가해서 일단 이렇게함
-// 헤더가 없다면 여기에 선언 (GameLogic.cpp에 있는 함수들)
-extern void InitGameMap();
-extern void InitEnemies();
-extern void UpdateBullets();
-extern void UpdateEnemyAI();
-extern void ProcessPlayerMove(int playerIndex, char* data);
-extern void ProcessPlayerAttack(int playerIndex, char* data);
-extern void BroadcastPacket(char* packet, int size);
-extern bool CheckGameEndConditions();
-
 // LLD 3. GameLoop 스레드 (게임 로직 돌리는 곳)
 unsigned __stdcall GameLoopThread(void* arg)
 {
@@ -23,7 +12,7 @@ unsigned __stdcall GameLoopThread(void* arg)
         {
             UpdateBullets(); // 범진님 기능 (총알+벽파괴)
             UpdateEnemyAI(); // 적 이동
-            // CheckCollisions(); // 필요시 추가
+            CheckCollisions(); 
         }
         LeaveCriticalSection(&g_GameRoom.lock);
 
@@ -182,6 +171,8 @@ void AcceptLoop(SOCKET listenSocket)
         {
             printf("Matching complete! Entering Lobby...\n");
 
+            g_GameRoom.gameStartTime = time(NULL);
+
             // [통합] 여기서 맵과 적을 모두 초기화합니다!
             InitGameMap();  // 범진님 (맵 생성)
             InitEnemies();  // 태웅님 (적 생성)
@@ -234,6 +225,9 @@ void AcceptLoop(SOCKET listenSocket)
                 // ★ 모두 준비 완료되면 게임 시작!
                 if (readyCount == MAX_PLAYERS_PER_ROOM) {
                     printf("All players Ready! Starting Game...\n");
+
+                    g_GameRoom.gameStartTime = time(NULL);
+                    srand((unsigned int)time(NULL));
 
                     S_GameStartPacket startPkt;
                     startPkt.header.size = sizeof(startPkt);
