@@ -633,7 +633,7 @@ void Game_Render(HDC mDC, GameState* pGame)
 	}
 	// 타이머 그리기
 	int oldBkMode = SetBkMode(mDC, TRANSPARENT);
-	COLORREF oldTextColor = SetTextColor(mDC, RGB(255, 255, 255));
+	COLORREF oldTextColor = SetTextColor(mDC, RGB(0, 0, 0));
 
 	TCHAR timeText[64];
 	wsprintf(timeText, L"TIME: %d", pGame->timeLeft);
