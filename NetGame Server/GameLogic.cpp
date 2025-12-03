@@ -152,6 +152,25 @@ void UpdateEnemyAI() {
             if (e->y < target->y) e->y += ENEMY_SPEED;
             else if (e->y > target->y) e->y -= ENEMY_SPEED;
         }
+        // 맵 전체 타일(150개)을 검사
+        for (int k = 0; k < 150; k++)
+        {
+            // 1. 이미 검정색(false)인 타일은 건드리지 않음 (최적화 & 조건 만족)
+            if (g_Board[k].value == false) continue;
+
+            // 2. 적과 타일이 조금이라도 겹치는지 검사 (AABB 충돌)
+            // 적 크기: PLAYER_SIZE(30), 타일 크기: BOARD_SIZE(35)
+            if (CheckRectCollision(
+                (int)e->x, (int)e->y, PLAYER_SIZE, PLAYER_SIZE,
+                g_Board[k].x, g_Board[k].y, BOARD_SIZE, BOARD_SIZE))
+            {
+                // 3. 겹쳤다면 검정색(false)으로 변경
+                g_Board[k].value = false;
+
+                // (로그 확인용 - 너무 많이 뜨면 주석 처리하세요)
+                // printf("Enemy %d turned Tile %d to Black!\n", i, k);
+            }
+        }
     }
 }
 
