@@ -171,6 +171,8 @@ void AcceptLoop(SOCKET listenSocket)
         {
             printf("Matching complete! Entering Lobby...\n");
 
+            g_GameRoom.gameStartTime = time(NULL);
+
             // [통합] 여기서 맵과 적을 모두 초기화합니다!
             InitGameMap();  // 범진님 (맵 생성)
             InitEnemies();  // 태웅님 (적 생성)
@@ -223,6 +225,9 @@ void AcceptLoop(SOCKET listenSocket)
                 // ★ 모두 준비 완료되면 게임 시작!
                 if (readyCount == MAX_PLAYERS_PER_ROOM) {
                     printf("All players Ready! Starting Game...\n");
+
+                    g_GameRoom.gameStartTime = time(NULL);
+                    srand((unsigned int)time(NULL));
 
                     S_GameStartPacket startPkt;
                     startPkt.header.size = sizeof(startPkt);

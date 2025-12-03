@@ -86,6 +86,9 @@ enum Scene {
 struct GameState {
 
 	int myPlayerID = -1; // 서버가 알려줄 내 ID (0, 1, 2)
+
+	int timeLeft = 120;
+
 	PLAYER players[MAX_PLAYERS]; // 나를 포함한 모든 플레이어
 	ENEMY enemies[MAX_ENEMIES];   
 
