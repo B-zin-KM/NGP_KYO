@@ -7,7 +7,7 @@
 #define MAX_ENEMIES 10
 #define ENEMY_SPEED 1
 
-#define MAX_BOARD 300   // 보드칸 개수
+#define MAX_BOARD 704   // 보드칸 개수
 #define BOARD_SIZE 35   // 보드칸 크기
 #define PLAYER_SIZE 30
 #define BULLET_SIZE_W 18 

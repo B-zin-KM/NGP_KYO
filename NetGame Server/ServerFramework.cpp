@@ -144,8 +144,20 @@ void AcceptLoop(SOCKET listenSocket)
                 g_GameRoom.players[index].isConnected = true;
 
                 // 초기 위치 설정
-                g_GameRoom.players[index].x = 400 + (index * 100);
-                g_GameRoom.players[index].y = 400;
+                switch (index) {
+                case 0: // 좌상단 (P0)
+                    g_GameRoom.players[index].x = 173;
+                    g_GameRoom.players[index].y = 177;
+                    break;
+                case 1: // 우상단 (P1)
+                    g_GameRoom.players[index].x = 1188;
+                    g_GameRoom.players[index].y = 177;
+                    break;
+                case 2: // 우하단 (P2)
+                    g_GameRoom.players[index].x = 1188;
+                    g_GameRoom.players[index].y = 842;
+                    break;
+                }
                 g_GameRoom.players[index].direct = 3;
                 g_GameRoom.players[index].life = true;
                 g_GameRoom.players[index].ammo = MAX_BULLETS;
