@@ -217,19 +217,51 @@ void CheckCollisions()
                 // --- 충돌 발생! ---
                 printf("[Crash] Player %d touched Enemy %d -> DIE\n", i, j);
 
-                // 1. 플레이어 사망 처리
-                g_GameRoom.players[i].life = false;
-                g_GameRoom.players[i].score -= 100;
-                //g_GameRoom.players[i].deadTime = GetTickCount();
+                // 1. 죽은 위치 백업 (폭발 이펙트 및 벽 파괴 중심점)
+                int deadX = (int)g_GameRoom.players[i].x;
+                int deadY = (int)g_GameRoom.players[i].y;
 
-                // 2. 폭발 이펙트 전송 (플레이어 위치)
+                // 2. 점수 차감
+                g_GameRoom.players[i].score -= 100;
+
+                // 3. 플레이어 리스폰 (초기 위치로 이동 & 생존 처리)
+                // (AcceptLoop에서 설정했던 초기 좌표 공식: 400 + index*100)
+                g_GameRoom.players[i].x = 400 + (i * 100);
+                g_GameRoom.players[i].y = 400;
+
+                // [중요] 죽여버리는(false) 게 아니라, 살려서(true) 계속 하게 만듭니다.
+                g_GameRoom.players[i].life = true;
+
+                // =========================================================
+                // ▼ [추가] 플레이어 사망 위치 주변 벽 파괴 ▼
+                // =========================================================
+                int centerX = deadX + 15; // 플레이어 중심
+                int centerY = deadY + 15;
+                int blastRadius = 50;     // 적보다 조금 더 크게 폭발 (50px)
+                int blastSize = blastRadius * 2;
+
+                for (int w = 0; w < MAX_BOARD; w++) {
+                    // 이미 하얀색(뚫린 곳)이면 패스
+                    if (g_Board[w].value == true) continue;
+
+                    // 폭발 범위와 벽돌이 겹치는지 확인
+                    if (CheckRectCollision(
+                        centerX - blastRadius, centerY - blastRadius, blastSize, blastSize,
+                        g_Board[w].x, g_Board[w].y, BOARD_SIZE, BOARD_SIZE))
+                    {
+                        g_Board[w].value = true; // 벽 파괴!
+                    }
+                }
+                // =========================================================
+
+                // 4. 폭발 패킷 전송 (백업해둔 deadX, deadY 위치에서 터짐)
                 S_ExplosionPacket expPkt;
                 expPkt.header.size = sizeof(S_ExplosionPacket);
-                expPkt.header.type = S_EXPLOSION; 
-                expPkt.x = (int)g_GameRoom.players[i].x + 15; // 중심점
-                expPkt.y = (int)g_GameRoom.players[i].y + 15;
-                expPkt.size = 25; 
-                expPkt.type = 1;  
+                expPkt.header.type = S_EXPLOSION;
+                expPkt.x = deadX + 15; // 죽은 위치 중심
+                expPkt.y = deadY + 15;
+                expPkt.size = 25;
+                expPkt.type = 1;  // 1: 플레이어 사망 이펙트 (색깔 다르게 처리 가능)
                 expPkt.playerID = i;
 
                 BroadcastPacket((char*)&expPkt, expPkt.header.size);
