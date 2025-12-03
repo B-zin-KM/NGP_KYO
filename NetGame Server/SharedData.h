@@ -17,7 +17,7 @@
 #define MAX_PACKET_QUEUE_SIZE 200 
 #define MAX_PACKET_DATA_SIZE 2048
 
-#define MAX_BULLETS 50 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
+#define MAX_BULLETS 100 // 화면에 동시에 날아다닐 수 있는 최대 총알 수
 
 #define GAME_DURATION_SEC 120 // 게임시간 120초 설정
 

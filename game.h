@@ -16,7 +16,7 @@
 #define playersize 30
 #define bulletlen 18
 #define bulletthick 8
-#define MAX_BULLETS 50
+#define MAX_BULLETS 150
 #define circleDiameter 9
 #define circleRadius 4.5
 
