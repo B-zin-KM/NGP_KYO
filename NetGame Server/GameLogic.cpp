@@ -167,8 +167,6 @@ void UpdateEnemyAI() {
                 // 3. 겹쳤다면 검정색(false)으로 변경
                 g_Board[k].value = false;
 
-                // (로그 확인용 - 너무 많이 뜨면 주석 처리하세요)
-                // printf("Enemy %d turned Tile %d to Black!\n", i, k);
             }
         }
     }
@@ -295,6 +293,24 @@ void UpdateBullets() {
                 // g_GameRoom.enemies[j].life = false; // 리스폰으로 할거니까 잠시 
                 int deadX = (int)g_GameRoom.enemies[j].x;
                 int deadY = (int)g_GameRoom.enemies[j].y; // 죽은위치를 백업 
+
+                int centerX = deadX + 15; // 적의 중심점 (크기 30의 절반)
+                int centerY = deadY + 15;
+                int blastRadius = 45;     // 폭발 반경 (이 값을 조절하면 파괴 범위가 달라짐)
+                int blastSize = blastRadius * 2;
+
+                for (int k = 0; k < MAX_BOARD; k++) {
+                    // 이미 하얀색(뚫린 곳)이면 패스
+                    if (g_Board[k].value == true) continue;
+
+                    // 폭발 범위(사각형)와 벽돌이 겹치는지 확인
+                    if (CheckRectCollision(
+                        centerX - blastRadius, centerY - blastRadius, blastSize, blastSize,
+                        g_Board[k].x, g_Board[k].y, BOARD_SIZE, BOARD_SIZE))
+                    {
+                        g_Board[k].value = true; // 벽 파괴! (하얀색으로 변경)
+                    }
+                }
 
 				// 점수 추가
                 int owner = b->ownerID;
