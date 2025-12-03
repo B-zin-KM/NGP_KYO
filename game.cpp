@@ -293,7 +293,12 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	}
 
 	if (atkPkt.direction != 0) {
-		pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+		// 총알이 6발 미만일 때만 발사 가능
+		if (pGame->bulletcount < 6) {
+			pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+			pGame->bulletcount++; // 발사한 총알 수 증가
+			printf("Bullet Fired! Count: %d\n", pGame->bulletcount); // 디버깅용
+		}
 	}
 
 	// 기타 키 (R, 1 등) 처리
@@ -547,8 +552,9 @@ void Game_Render(HDC mDC, GameState* pGame)
 	// 4. 회전 총알 그리기 (내 것만)
 	hBrush = pGame->hBrushWhite;
 	oldBrush = (HBRUSH)SelectObject(mDC, hBrush);
-	for (int i = 0; i < 6; i++) {
-		Ellipse(mDC, pGame->readybullet[i].x, pGame->readybullet[i].y, pGame->readybullet[i].x + circleDiameter, pGame->readybullet[i].y + circleDiameter);
+	for (int i = pGame->bulletcount; i < 6; i++) {
+		Ellipse(mDC, pGame->readybullet[i].x, pGame->readybullet[i].y,
+			pGame->readybullet[i].x + circleDiameter, pGame->readybullet[i].y + circleDiameter);
 	}
 	SelectObject(mDC, oldBrush);
 
