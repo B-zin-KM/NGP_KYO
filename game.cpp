@@ -11,14 +11,11 @@ bool CheckRectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, 
 bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 {
 	// 보드판 가장자리 충돌검사
-	const int MAP_LEFT = 335;
-	const int MAP_TOP = 240;
+	const int MAP_LEFT = 135;
+	const int MAP_TOP = 140;
 
-	// [수정됨] 가로 20칸 x 타일크기 35
-	const int MAP_RIGHT = 335 + (BOARDSIZE_x * boardsize);
-
-	// [수정됨] 세로 15칸 x 타일크기 35
-	const int MAP_BOTTOM = 240 + (BOARDSIZE_y * boardsize);
+	const int MAP_RIGHT = MAP_LEFT + (BOARDSIZE_x * boardsize);
+	const int MAP_BOTTOM = MAP_TOP + (BOARDSIZE_y * boardsize);
 
 	if (nextX < MAP_LEFT) return true;
 	if (nextY < MAP_TOP) return true;
@@ -71,7 +68,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 
 	case S_GAME_START:
 	{
-		pGame->currentScene = SCENE_INGAME; 
+		pGame->currentScene = SCENE_INGAME;
 		printf("Game Started!\n");
 		break;
 	}
@@ -103,13 +100,13 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			printf("Auto-switched to InGame Scene!\n");
 		}
 		S_GameStatePacket* pPkt = (S_GameStatePacket*)pHeader;
-		
+
 		if (pGame->myPlayerID != -1) {
 			int myid = pGame->myPlayerID;
 			printf("[client] recv state: mypos(%d, %d)\n",
-				   pPkt->players[myid].x, pPkt->players[myid].y);
+				pPkt->players[myid].x, pPkt->players[myid].y);
 		}
-		
+
 		// 1. 모든 플레이어의 위치/생존 정보 갱신
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 
@@ -214,15 +211,35 @@ void Game_Init(HWND hWnd, GameState* pGame)
 	pGame->boardnum = 0;
 	for (int i = 0; i < BOARDSIZE_y; i++) {
 		for (int j = 0; j < BOARDSIZE_x; j++) {
-			pGame->board_easy[pGame->boardnum].x = j * boardsize + 335;
-			pGame->board_easy[pGame->boardnum].y = i * boardsize + 240;
+			pGame->board_easy[pGame->boardnum].x = j * boardsize + 135;
+			pGame->board_easy[pGame->boardnum].y = i * boardsize + 140;
 			pGame->boardnum++;
 		}
 	}
-	// 초기 하얀타일 설정
-	for (int j = 3; j < 7; j++) {
-		for (int k = 5; k < 10; k++) {
-			pGame->board_easy[j * 15 + k].value = TRUE;
+	// --- 초기 하얀타일 설정 (3군데: 좌상단, 우상단, 우하단) ---
+
+	int width = BOARDSIZE_x;
+	int height = BOARDSIZE_y;
+
+	// 1. 좌상단 (Left-Top) 3x3
+	for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < 3; x++) {
+			int index = y * width + x;
+			pGame->board_easy[index].value = TRUE;
+		}
+	}
+	// 2. 우상단 (Right-Top) 3x3
+	for (int y = 0; y < 3; y++) {
+		for (int x = width - 3; x < width; x++) {
+			int index = y * width + x;
+			pGame->board_easy[index].value = TRUE;
+		}
+	}
+	// 3. 우하단 (Right-Bottom) 3x3
+	for (int y = height - 3; y < height; y++) {
+		for (int x = width - 3; x < width; x++) {
+			int index = y * width + x;
+			pGame->board_easy[index].value = TRUE;
 		}
 	}
 
@@ -270,7 +287,7 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	//// 2. 보낼 패킷 준비
 	//C_MovePacket pkt;
 	//pkt.size = sizeof(C_MovePacket);
-	//pkt.type = C_MOVE; // 10번 
+	//pkt.type = C_MOVE; // 10번
 	//pkt.direction = 0;
 
 	switch (wParam) {
@@ -474,12 +491,16 @@ void Game_Render(HDC mDC, GameState* pGame)
 	{
 		TCHAR lpOut[100];
 
-		// 배경 (흰색)
-		Rectangle(mDC, 0, 0, 1200, 900);
+		// 배경 (흰색) - 1400x1000
+		Rectangle(mDC, 0, 0, 1400, 1000);
+
+		// [중요] 텍스트 정렬 기준을 '중앙'으로 변경 (기존 설정 저장)
+		UINT oldAlign = SetTextAlign(mDC, TA_CENTER);
+		int centerX = 700; // 화면 중앙 좌표 (1400 / 2)
 
 		// 제목
 		wsprintf(lpOut, L"=== GAME LOBBY ===");
-		TextOut(mDC, 500, 200, lpOut, lstrlen(lpOut));
+		TextOut(mDC, centerX, 200, lpOut, lstrlen(lpOut));
 
 		// 플레이어 목록 표시
 		for (int i = 0; i < MAX_PLAYERS; ++i) {
@@ -497,18 +518,22 @@ void Game_Render(HDC mDC, GameState* pGame)
 				wsprintf(lpOut, L"Player %d : (Empty)", i);
 				SetTextColor(mDC, RGB(100, 100, 100));
 			}
-			TextOut(mDC, 500, 300 + (i * 30), lpOut, lstrlen(lpOut));
+			// 중앙 정렬 좌표 사용, 간격을 40으로 살짝 늘림
+			TextOut(mDC, centerX, 300 + (i * 40), lpOut, lstrlen(lpOut));
 		}
 
 		// 내 상태 표시
 		SetTextColor(mDC, RGB(0, 0, 0)); // 검은색 복귀
 		if (pGame->myPlayerID != -1) {
 			wsprintf(lpOut, L"My ID: %d (Press 'R' to Ready)", pGame->myPlayerID);
-			TextOut(mDC, 500, 500, lpOut, lstrlen(lpOut));
+			TextOut(mDC, centerX, 600, lpOut, lstrlen(lpOut));
 		}
 		else {
-			TextOut(mDC, 500, 500, L"Connecting to Server...", 23);
+			TextOut(mDC, centerX, 600, L"Connecting to Server...", 23);
 		}
+
+		// [중요] 텍스트 정렬 기준을 원래대로 복구 (안 하면 인게임 UI가 깨짐)
+		SetTextAlign(mDC, oldAlign);
 		return;
 	}
 
@@ -523,13 +548,13 @@ void Game_Render(HDC mDC, GameState* pGame)
 		SelectObject(mDC, oldBrush);
 	}
 
-	
+
 	oldBrush = (HBRUSH)SelectObject(mDC, pGame->hBrushBlack);
 	for (int i = 0; i < MAX_BULLETS; i++) {
 		if (pGame->serverBullets[i].active) {
-            int bx = pGame->serverBullets[i].x;
-            int by = pGame->serverBullets[i].y;
-            int dir = pGame->serverBullets[i].direct;
+			int bx = pGame->serverBullets[i].x;
+			int by = pGame->serverBullets[i].y;
+			int dir = pGame->serverBullets[i].direct;
 
 			if (dir == 1 || dir == 2) // 가로
 				Rectangle(mDC, bx, by, bx + bulletlen, by + bulletthick);
@@ -610,9 +635,9 @@ void Game_Render(HDC mDC, GameState* pGame)
 		TCHAR uiBuf[100];
 		SetBkMode(mDC, TRANSPARENT); // 텍스트 배경을 투명하게 설정
 
-		// 위치 설정 (창 가로 크기가 1200이므로 오른쪽 끝인 1000 지점)
-		int startX = 1000;
-		int startY = 30;
+		// 위치 설정
+		int startX = 1150;
+		int startY = 40;
 
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			// 점수 텍스트 준비
@@ -629,23 +654,42 @@ void Game_Render(HDC mDC, GameState* pGame)
 
 			// 텍스트 출력 (한 줄씩 띄워서)
 			TextOut(mDC, startX, startY + (i * 25), uiBuf, lstrlen(uiBuf));
-		}	
+		}
 	}
-	// 타이머 그리기
-	int oldBkMode = SetBkMode(mDC, TRANSPARENT);
-	COLORREF oldTextColor = SetTextColor(mDC, RGB(0, 0, 0));
+
+	// --- 타이머 그리기 ---
+	// 1. 폰트 생성
+	HFONT hTimeFont = CreateFont(60, 0, 0, 0, FW_BOLD,
+		FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial");
+
+	HFONT oldFont = (HFONT)SelectObject(mDC, hTimeFont);
+
+	// 배경 투명, 글씨 검은색
+	SetBkMode(mDC, TRANSPARENT);
+	SetTextColor(mDC, RGB(0, 0, 0));
+	UINT oldAlign = SetTextAlign(mDC, TA_CENTER); // 텍스트 중앙 정렬
+
+	// 2. 시간 계산 (초 -> 분:초)
+	int min = pGame->timeLeft / 60;
+	int sec = pGame->timeLeft % 60;
 
 	TCHAR timeText[64];
-	wsprintf(timeText, L"TIME: %d", pGame->timeLeft);
+	wsprintf(timeText, L"%02d:%02d", min, sec);
 
-	TextOut(mDC, 350, 10, timeText, lstrlen(timeText));
+	// 3. 텍스트 출력 
+	TextOut(mDC, 695, 45, timeText, lstrlen(timeText));
 
+	// 4. 게임 오버 메시지
 	if (pGame->timeLeft <= 0) {
 		TCHAR overText[] = L"GAME OVER";
-		TextOut(mDC, 380, 300, overText, lstrlen(overText));
+		TextOut(mDC, 700, 500, overText, lstrlen(overText));
 	}
-	SetBkMode(mDC, oldBkMode);
-	SetTextColor(mDC, oldTextColor);
+
+	SetTextAlign(mDC, oldAlign);
+	SelectObject(mDC, oldFont);
+	DeleteObject(hTimeFont);
 }
 
 // --- 탄환 개수 반환 함수 ---

@@ -4,7 +4,7 @@
 #define MAX_ENEMIES 10
 #define MAX_BULLETS 150
 #define ENEMY_SPEED 1
-#define BOARD_SIZE 300 // 20X15
+#define BOARD_SIZE 704 // 32X22
 
 // 1바이트 정렬 시작
 #pragma pack(push, 1)
