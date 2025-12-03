@@ -13,16 +13,22 @@ bool CheckWallCollision(GameState* pGame, int nextX, int nextY)
 	// 보드판 가장자리 충돌검사
 	const int MAP_LEFT = 335;
 	const int MAP_TOP = 240;
-	const int MAP_RIGHT = 335 + (15 * 35);
-	const int MAP_BOTTOM = 240 + (10 * 35);
+
+	// [수정됨] 가로 20칸 x 타일크기 35
+	const int MAP_RIGHT = 335 + (BOARDSIZE_x * boardsize);
+
+	// [수정됨] 세로 15칸 x 타일크기 35
+	const int MAP_BOTTOM = 240 + (BOARDSIZE_y * boardsize);
 
 	if (nextX < MAP_LEFT) return true;
 	if (nextY < MAP_TOP) return true;
+
+	// 플레이어 크기(playersize)를 고려하여 우측/하단 경계 체크
 	if (nextX > MAP_RIGHT - playersize) return true;
 	if (nextY > MAP_BOTTOM - playersize) return true;
 
 	// 검은타일과 충돌검사
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		if (pGame->board_easy[i].value == TRUE) continue;
 		if (CheckRectCollision(nextX, nextY, playersize, playersize,
 			pGame->board_easy[i].x, pGame->board_easy[i].y, boardsize, boardsize))
@@ -115,6 +121,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 			pGame->players[i].direct = pPkt->players[i].direct;
 			pGame->players[i].life = isAlive;
 			pGame->players[i].ammo = pPkt->players[i].ammo;
+			pGame->players[i].score = pPkt->players[i].score;
 
 			// 좌표 정보
 			int serverX = pPkt->players[i].x;
@@ -171,7 +178,7 @@ void ProcessPacket(GameState* pGame, PacketHeader* pHeader)
 		}
 
 		// 3. 보드판 갱신
-		for (int i = 0; i < 150; i++) {
+		for (int i = 0; i < BOARD_SIZE; i++) {
 			pGame->board_easy[i].value = pPkt->board[i];
 		}
 
@@ -205,13 +212,14 @@ void Game_Init(HWND hWnd, GameState* pGame)
 
 	// 보드 생성 (일단 로컬에서 초기화, 나중에 서버 동기화 필요)
 	pGame->boardnum = 0;
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 15; j++) {
+	for (int i = 0; i < BOARDSIZE_y; i++) {
+		for (int j = 0; j < BOARDSIZE_x; j++) {
 			pGame->board_easy[pGame->boardnum].x = j * boardsize + 335;
 			pGame->board_easy[pGame->boardnum].y = i * boardsize + 240;
 			pGame->boardnum++;
 		}
 	}
+	// 초기 하얀타일 설정
 	for (int j = 3; j < 7; j++) {
 		for (int k = 5; k < 10; k++) {
 			pGame->board_easy[j * 15 + k].value = TRUE;
@@ -293,7 +301,12 @@ void Game_HandleInput_Down(GameState* pGame, WPARAM wParam)
 	}
 
 	if (atkPkt.direction != 0) {
-		pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+		// 총알이 6발 미만일 때만 발사 가능
+		if (pGame->bulletcount < 6) {
+			pGame->networkManager.SendPacket((char*)&atkPkt, sizeof(atkPkt));
+			pGame->bulletcount++; // 발사한 총알 수 증가
+			printf("Bullet Fired! Count: %d\n", pGame->bulletcount); // 디버깅용
+		}
 	}
 
 	// 기타 키 (R, 1 등) 처리
@@ -447,7 +460,7 @@ void Game_Update(HWND hWnd, GameState* pGame, float deltaTime)
 
 
 	// 4. 보드 색상 갱신 (서버에서 벽이 뚫리면 여기서 색이 바뀜)
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		if (pGame->board_easy[i].value) pGame->board_easy[i].color = 255; // 흰색 (이동 가능)
 		else pGame->board_easy[i].color = 30;  // 검은색 (벽)
 	}
@@ -503,7 +516,7 @@ void Game_Render(HDC mDC, GameState* pGame)
 	TCHAR lpOut[100];
 
 	// 1. 보드 그리기
-	for (int i = 0; i < 150; i++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		hBrush = (pGame->board_easy[i].value) ? pGame->hBrushWhite : pGame->hBrushGray;
 		oldBrush = (HBRUSH)SelectObject(mDC, hBrush);
 		Rectangle(mDC, pGame->board_easy[i].x, pGame->board_easy[i].y, pGame->board_easy[i].x + boardsize, pGame->board_easy[i].y + boardsize);
@@ -547,8 +560,9 @@ void Game_Render(HDC mDC, GameState* pGame)
 	// 4. 회전 총알 그리기 (내 것만)
 	hBrush = pGame->hBrushWhite;
 	oldBrush = (HBRUSH)SelectObject(mDC, hBrush);
-	for (int i = 0; i < 6; i++) {
-		Ellipse(mDC, pGame->readybullet[i].x, pGame->readybullet[i].y, pGame->readybullet[i].x + circleDiameter, pGame->readybullet[i].y + circleDiameter);
+	for (int i = pGame->bulletcount; i < 6; i++) {
+		Ellipse(mDC, pGame->readybullet[i].x, pGame->readybullet[i].y,
+			pGame->readybullet[i].x + circleDiameter, pGame->readybullet[i].y + circleDiameter);
 	}
 	SelectObject(mDC, oldBrush);
 
@@ -591,6 +605,32 @@ void Game_Render(HDC mDC, GameState* pGame)
 		}
 	}
 
+	// 점수판 UI 그리기
+	{
+		TCHAR uiBuf[100];
+		SetBkMode(mDC, TRANSPARENT); // 텍스트 배경을 투명하게 설정
+
+		// 위치 설정 (창 가로 크기가 1200이므로 오른쪽 끝인 1000 지점)
+		int startX = 1000;
+		int startY = 30;
+
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			// 점수 텍스트 준비
+			if (i == pGame->myPlayerID) {
+				// 내 점수는 파란색으로 표시하고 (ME) 붙이기
+				SetTextColor(mDC, RGB(0, 0, 255));
+				wsprintf(uiBuf, L"[P%d] Score : %d (ME)", i, pGame->players[i].score);
+			}
+			else {
+				// 다른 플레이어는 검은색
+				SetTextColor(mDC, RGB(0, 0, 0));
+				wsprintf(uiBuf, L"[P%d] Score : %d", i, pGame->players[i].score);
+			}
+
+			// 텍스트 출력 (한 줄씩 띄워서)
+			TextOut(mDC, startX, startY + (i * 25), uiBuf, lstrlen(uiBuf));
+		}	
+	}
 	// 타이머 그리기
 	int oldBkMode = SetBkMode(mDC, TRANSPARENT);
 	COLORREF oldTextColor = SetTextColor(mDC, RGB(255, 255, 255));

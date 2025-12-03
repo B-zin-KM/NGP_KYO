@@ -7,7 +7,8 @@
 #define MAX_ENEMIES 10
 #define ENEMY_SPEED 1
 
-#define BOARD_SIZE 35
+#define MAX_BOARD 300   // 보드칸 개수
+#define BOARD_SIZE 35   // 보드칸 크기
 #define PLAYER_SIZE 30
 #define BULLET_SIZE_W 18 
 #define BULLET_SIZE_H 8
@@ -50,6 +51,7 @@ typedef struct {
     int x, y;
     int direct;
     int ammo;
+	int score;
 } PlayerState;
 
 typedef struct {
@@ -65,7 +67,7 @@ typedef struct {
 
     BulletState bullets[MAX_BULLETS];
 
-    bool board[150];
+    bool board[MAX_BOARD];
 
     int remainingTime;
 
@@ -136,7 +138,7 @@ struct SERVER_BOARD {
     int x, y;
     bool value; // TRUE: 이동 가능(흰색), FALSE: 벽(검은색)
 };
-extern SERVER_BOARD g_Board[150];
+extern SERVER_BOARD g_Board[MAX_BOARD];
 
 // 서버 내부 Player 구조체
 typedef struct {
@@ -154,6 +156,8 @@ typedef struct {
     bool life;
     int ammo;
 
+    int score;
+
 	bool isReady; // 로비 준비 상태
 } Player;
 
@@ -167,7 +171,7 @@ typedef struct {
 
     EnemyState enemies[MAX_ENEMIES];
 
-    bool board[150];
+    bool board[MAX_BOARD];
 
     time_t gameStartTime;
 
